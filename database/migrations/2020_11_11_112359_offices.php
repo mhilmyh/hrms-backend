@@ -15,7 +15,7 @@ class Offices extends Migration
      */
     public function up()
     {
-        Schema::drop($this->table_name, function (Blueprint $table) {
+        Schema::create($this->table_name, function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->time('opening_time');

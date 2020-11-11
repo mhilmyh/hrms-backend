@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Department;
+use App\Models\Address;
+use App\Models\Image;
 
 class Office extends Model
 {
@@ -92,5 +94,15 @@ class Office extends Model
   public function address()
   {
     return $this->hasOne(Address::class, 'id', 'address_id');
+  }
+
+  /**
+   * Departments of office
+   * 
+   * @return array
+   */
+  public function departments()
+  {
+    return $this->hasMany(Department::class, 'id', 'address_id');
   }
 }

@@ -2,6 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Department;
+use App\Models\Employee;
+use App\Models\Image;
+use App\Models\Notification;
+use App\Models\Office;
+use App\Models\Timesheet;
+use Departments;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,5 +21,18 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call('UsersTableSeeder');
+
+        $this->call([
+            UserSeeder::class,
+            ActivitySeeder::class,
+            EmailSeeder::class,
+            AddressSeeder::class,
+            OfficeSeeder::class,
+            DepartmentSeeder::class,
+            ImageSeeder::class,
+            NotificationSeeder::class,
+            TimesheetSeeder::class,
+            EmployeeSeeder::class,
+        ]);
     }
 }

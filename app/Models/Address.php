@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Address extends Model
 {
 
+    use HasFactory;
   /**
    * The table associated with the model.
    *
    * @var string
    */
   protected $table = 'addresses';
+  public $timestamps = false;
 
   /**
    * The attributes that are mass assignable.
@@ -51,7 +54,7 @@ class Address extends Model
 
   /**
    * The "booted" method of the model
-   * 
+   *
    * @return void
    */
   public static function booted()

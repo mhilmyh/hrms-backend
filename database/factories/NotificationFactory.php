@@ -2,18 +2,18 @@
 
 namespace Database\Factories;
 
+use App\Models\Notification;
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UserFactory extends Factory
+class NotificationFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = Notification::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +23,9 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'email' => $this->faker->unique()->safeEmail,
-            'password' => Str::random(15)
+            'message' => $this->faker->sentence,
+            'is_read' => $this->faker->boolean,
+            'user_id' => User::factory()
         ];
     }
 }

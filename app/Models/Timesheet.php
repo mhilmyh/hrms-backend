@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Models\Activities;
 
 class Timesheet extends Model
 {
+    use HasFactory;
 
   /**
    * The table associated with the model.
@@ -54,7 +56,7 @@ class Timesheet extends Model
 
   /**
    * The "booted" method of the model
-   * 
+   *
    * @return void
    */
   public static function booted()
@@ -63,7 +65,7 @@ class Timesheet extends Model
 
   /**
    * Sender detail from relation
-   * 
+   *
    * @return object
    */
   public function user()
@@ -73,7 +75,7 @@ class Timesheet extends Model
 
   /**
    * Activities for timesheets
-   * 
+   *
    * @return object
    */
   public function activities()

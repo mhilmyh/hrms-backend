@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
 
 class Notification extends Model
 {
+    use HasFactory;
 
   /**
    * The table associated with the model.
@@ -55,7 +57,7 @@ class Notification extends Model
 
   /**
    * The "booted" method of the model
-   * 
+   *
    * @return void
    */
   public static function booted()
@@ -64,7 +66,7 @@ class Notification extends Model
 
   /**
    * User who owns this notification
-   * 
+   *
    * @return object
    */
   public function user()

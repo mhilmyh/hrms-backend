@@ -3,18 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use App\Models\Timesheet;
 
 class Activity extends Model
 {
-
+    use HasFactory;
   /**
    * The table associated with the model.
    *
    * @var string
    */
   protected $table = 'activities';
+  public $timestamps = false;
 
   /**
    * The attributes that are mass assignable.
@@ -51,7 +53,7 @@ class Activity extends Model
 
   /**
    * The "booted" method of the model
-   * 
+   *
    * @return void
    */
   public static function booted()
@@ -60,7 +62,7 @@ class Activity extends Model
 
   /**
    * Activity detail from timesheet
-   * 
+   *
    * @return object
    */
   public function timesheet()

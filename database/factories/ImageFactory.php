@@ -2,18 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use Illuminate\Support\Str;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UserFactory extends Factory
+class ImageFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = Image::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +22,8 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'email' => $this->faker->unique()->safeEmail,
-            'password' => Str::random(15)
+            'alt' => $this->faker->title,
+            'url' => "https://picsum.photos/500",
         ];
     }
 }

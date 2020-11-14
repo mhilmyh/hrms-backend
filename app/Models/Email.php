@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
 
 class Email extends Model
 {
+    use HasFactory;
 
   /**
    * The table associated with the model.
@@ -50,7 +52,7 @@ class Email extends Model
 
   /**
    * The "booted" method of the model
-   * 
+   *
    * @return void
    */
   public static function booted()
@@ -59,7 +61,7 @@ class Email extends Model
 
   /**
    * Sender detail from relation
-   * 
+   *
    * @return object
    */
   public function sender()
@@ -69,7 +71,7 @@ class Email extends Model
 
   /**
    * Receiver detail from relation
-   * 
+   *
    * @return object
    */
   public function receiver()

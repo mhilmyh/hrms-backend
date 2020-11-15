@@ -70,7 +70,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     /**
-     * Get the identifier that will be stored in the subject 
+     * Get the identifier that will be stored in the subject
      * claim of the JWT.
      *
      * @return mixed
@@ -81,7 +81,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Return a key value array, containing any custom claims 
+     * Return a key value array, containing any custom claims
      * to be added to the JWT.
      *
      * @return array
@@ -93,7 +93,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * The "booted" method of the model
-     * 
+     *
      * @return void
      */
     public static function booted()
@@ -105,7 +105,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Employee detail from relation
-     * 
+     *
      * @return object
      */
     public function employee()
@@ -115,7 +115,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Notification user
-     * 
+     *
      * @return array
      */
     public function notifications()
@@ -125,11 +125,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Email send to this user
-     * 
+     *
      * @return array
      */
     public function emails()
     {
         return $this->hasMany(Email::class, 'user_id', 'id');
     }
+
+    public function testDatabase()
+{
+    $user = User::factory()->make();
+
+    // Use model in tests...
+}
 }

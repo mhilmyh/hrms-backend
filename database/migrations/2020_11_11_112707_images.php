@@ -18,8 +18,8 @@ class Images extends Migration
         Schema::create($this->table_name, function (Blueprint $table) {
             $table->id();
             $table->string('alt');
-            $table->string('link');
             $table->string('url');
+            $table->timestamps();
         });
     }
 

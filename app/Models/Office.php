@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Department;
@@ -10,6 +11,7 @@ use App\Models\Image;
 
 class Office extends Model
 {
+    use HasFactory;
 
   /**
    * The table associated with the model.
@@ -17,6 +19,7 @@ class Office extends Model
    * @var string
    */
   protected $table = 'offices';
+  public $timestamps = false;
 
   /**
    * The attributes that are mass assignable.
@@ -59,7 +62,7 @@ class Office extends Model
 
   /**
    * The "booted" method of the model
-   * 
+   *
    * @return void
    */
   public static function booted()
@@ -68,7 +71,7 @@ class Office extends Model
 
   /**
    * The chairman of department
-   * 
+   *
    * @return object
    */
   public function head_office()
@@ -78,7 +81,7 @@ class Office extends Model
 
   /**
    * Image for office picture
-   * 
+   *
    * @return object
    */
   public function image()
@@ -88,7 +91,7 @@ class Office extends Model
 
   /**
    * Address of office
-   * 
+   *
    * @return object
    */
   public function address()
@@ -98,7 +101,7 @@ class Office extends Model
 
   /**
    * Departments of office
-   * 
+   *
    * @return array
    */
   public function departments()

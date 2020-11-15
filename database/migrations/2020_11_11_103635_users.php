@@ -19,8 +19,8 @@ class Users extends Migration
             $table->id();
             $table->string('email');
             $table->string('password');
-            $table->boolean('is_admin');
-            $table->boolean('is_login');
+            $table->boolean('is_admin')->default(false);
+            $table->boolean('is_login')->default(false);
             $table->foreignId('employee_id')->nullable();
             $table->timestamps();
         });

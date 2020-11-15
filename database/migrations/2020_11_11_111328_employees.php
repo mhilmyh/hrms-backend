@@ -27,10 +27,10 @@ class Employees extends Migration
             $table->string('job_position');
             $table->float('rating');
             $table->foreignId('user_id');
-            $table->foreignId('image_id');
-            $table->foreignId('address_id');
-            $table->foreignId('supervisor_id');
-            $table->foreignId('department_id');
+            $table->foreignId('image_id')->nullable();
+            $table->foreignId('address_id')->nullable();
+            $table->foreignId('supervisor_id')->nullable();
+            $table->foreignId('department_id')->nullable();
             $table->timestamps();
         });
     }

@@ -10,12 +10,15 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    private $public_path = 'storage';
-    private $dest_folder = 'upload';
+    private $publicPath = 'storage';
+    private $destFolder = 'upload';
 
     /**
      * Format response when send to client
      * 
+     * @param data      only array or null
+     * @param status    status code response
+     * @param message   message string response
      * @return object
      */
     protected function responseHandler($data = null, $status = 200, $message = "")
@@ -40,11 +43,11 @@ class Controller extends BaseController
             $extension = $request->file('image')->getClientOriginalExtension();
             $image_name = $entity . '-' . time() . '-' . Str::random() .  '.' . $extension;
             $success = $request->file('image')->move(
-                storage_path('app/public/' . $this->dest_folder),
+                storage_path('app/public/' . $this->destFolder),
                 $image_name
             );
             if ($success) {
-                $prefix_name = request()->getSchemeAndHttpHost() . '/' . $this->public_path . '/' . $this->dest_folder;
+                $prefix_name = request()->getSchemeAndHttpHost() . '/' . $this->publicPath . '/' . $this->destFolder;
                 return $prefix_name . '/' . $image_name;
             }
             return null;
@@ -54,6 +57,7 @@ class Controller extends BaseController
     /**
      * Helper function for deleting image
      * 
+     * @param image_url string url of image
      * @return bool
      */
     protected function imageDeleteHelper($image_url = '')
@@ -61,7 +65,7 @@ class Controller extends BaseController
         $array = explode("/", $image_url);
         $image_name = end($array);
         try {
-            File::Delete('storage/' . $this->dest_folder . '/' . $image_name);
+            File::Delete('storage/' . $this->destFolder . '/' . $image_name);
             return true;
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
@@ -72,6 +76,8 @@ class Controller extends BaseController
     /**
      * Error response when validation failed
      * 
+     * @param request   request object
+     * @param error     list error
      * @return object
      */
     protected function buildFailedValidationResponse(Request $request, array $errors)

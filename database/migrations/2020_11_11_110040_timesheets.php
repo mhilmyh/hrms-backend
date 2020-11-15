@@ -17,7 +17,7 @@ class Timesheets extends Migration
     {
         Schema::create($this->table_name, function (Blueprint $table) {
             $table->id();
-            $table->boolean('is_approved');
+            $table->boolean('is_approved')->default(false);
             $table->foreignId('user_id');
             $table->timestamps();
         });

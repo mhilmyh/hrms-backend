@@ -8,17 +8,22 @@ class UserController extends Controller
 {
     private $validateRule = [
         'update' => [
-            'email' => 'required|unique:users|email',
-            'password' => 'required|string|min:6',
+            'email' => 'nullable|unique:users|email',
+            'password' => 'nullable|string|min:6',
             'secret' => 'nullable|string',
-            'first_name' => 'required|string',
+            'first_name' => 'nullable|string',
             'mid_name' => 'nullable|string',
-            'last_name' => 'required|string',
-            'phone' => 'required|string|between:8,16',
-            'gender' => 'required|in:M,F,U',
-            'birthday' => 'required|date',
-            'salary' => 'required|integer',
-            'job_position' => 'required|string',
+            'last_name' => 'nullable|string',
+            'phone' => 'nullable|string|between:8,16',
+            'gender' => 'nullable|in:M,F,U',
+            'birthday' => 'nullable|date',
+            'salary' => 'nullable|integer',
+            'job_position' => 'nullable|string',
+            'rating' => 'nullable|numeric',
+            'image_id' => 'nullable|integer',
+            'address_id' => 'nullable|integer',
+            'supervisor_id' => 'nullable|integer',
+            'department_id' => 'nullable|integer',
         ]
     ];
     /**

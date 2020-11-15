@@ -6,7 +6,15 @@ use Illuminate\Http\Request;
 
 class TimesheetController extends Controller
 {
-    private $validateRule = '';
+    private $validateRule = [
+        'created' => [
+            'activities' => 'required|array',
+            'activities.*.desc' => 'required|string',
+            'activities.*.start_time' => 'required|date_format:H:i',
+            'activities.*.stop_time' => 'required|date_format:H:i',
+            'user_id' => 'required|integer',
+        ]
+    ];
 
     /**
      * Create a new controller instance.
@@ -27,6 +35,8 @@ class TimesheetController extends Controller
      */
     public function index(Request $request)
     {
+        // TODO: get all time sheet
+
         $this->responseHandler(['timesheets' => null]);
     }
 
@@ -37,6 +47,10 @@ class TimesheetController extends Controller
      */
     public function create(Request $request)
     {
+        $this->validate($request, $this->validateRule['create']);
+
+        // TODO: store activity and then store timesheet
+
         $this->responseHandler();
     }
 
@@ -47,6 +61,8 @@ class TimesheetController extends Controller
      */
     public function delete(Request $request)
     {
+        // TODO: find and delete timesheet
+
         $this->responseHandler(['value' => true]);
     }
 }

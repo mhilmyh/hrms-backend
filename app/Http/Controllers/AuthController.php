@@ -24,6 +24,10 @@ class AuthController extends Controller
       'birthday' => 'required|date',
       'salary' => 'required|integer',
       'job_position' => 'required|string',
+      'image_id' => 'nullable|integer',
+      'address_id' => 'nullable|integer',
+      'supervisor_id' => 'nullable|integer',
+      'department_id' => 'nullable|integer',
       'country' => 'required|string',
       'province' => 'required|string',
       'city' => 'required|string',
@@ -95,6 +99,11 @@ class AuthController extends Controller
   public function register(Request $request)
   {
     $this->validate($request, $this->validateRule['register']);
+
+    // TODO: create user
+    // TODO: create employee
+    // TODO: create address
+    // TODO: save
 
     return $this->responseHandler([
       'value' => true

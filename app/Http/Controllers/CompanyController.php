@@ -7,7 +7,52 @@ use Illuminate\Http\Request;
 class CompanyController extends Controller
 {
     private $validateRule = [
-        'create' => []
+        'office' => [
+            'create' => [
+                'name' => 'required|string',
+                'opening_time' => 'required|date_format:H:i',
+                'closing_time' => 'required|date_format:H:i',
+                'building' => 'required|string',
+                'is_branch' => 'nullable|boolean',
+                'head_office_id' => 'nullable|integer',
+                'image_id' => 'nullable|integer',
+                'country' => 'required|string',
+                'province' => 'required|string',
+                'city' => 'required|string',
+                'subdistrict' => 'required|string',
+                'postal_code' => 'required|string',
+                'street' => 'required|string'
+            ],
+            'update' => [
+                'name' => 'nullable|string',
+                'opening_time' => 'nullable|date_format:H:i',
+                'closing_time' => 'nullable|date_format:H:i',
+                'building' => 'nullable|string',
+                'is_branch' => 'nullable|boolean',
+                'head_office_id' => 'nullable|integer',
+                'image_id' => 'nullable|integer',
+                'country' => 'nullable|string',
+                'province' => 'nullable|string',
+                'city' => 'nullable|string',
+                'subdistrict' => 'nullable|string',
+                'postal_code' => 'nullable|string',
+                'street' => 'nullable|string'
+            ],
+        ],
+        'department' => [
+            'create' => [
+                'name' => 'required|string',
+                'code' => 'required|string',
+                'chairman_id' => 'nullable|integer',
+                'office_id' => 'nullable|integer',
+            ],
+            'update' => [
+                'name' => 'nullable|string',
+                'code' => 'nullable|string',
+                'chairman_id' => 'nullable|integer',
+                'office_id' => 'nullable|integer',
+            ],
+        ],
     ];
 
     /**
@@ -29,6 +74,8 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
+        // TODO: Get all office and department
+
         $this->responseHandler();
     }
 
@@ -39,6 +86,10 @@ class CompanyController extends Controller
      */
     public function create(Request $request)
     {
+        // TODO: check if client want to create office or department
+        // TODO: apply validate request (office or department)
+        // TODO: store office or department
+
         $this->responseHandler();
     }
 
@@ -49,6 +100,10 @@ class CompanyController extends Controller
      */
     public function update(Request $request)
     {
+        // TODO: check if client want to update office or department
+        // TODO: apply validate request (office or department)
+        // TODO: update office or department
+
         $this->responseHandler();
     }
 
@@ -59,6 +114,8 @@ class CompanyController extends Controller
      */
     public function delete(Request $request)
     {
+        // TODO: check if client want to delete office or department
+
         $this->responseHandler(['value' => true]);
     }
 }

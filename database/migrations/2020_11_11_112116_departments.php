@@ -19,8 +19,8 @@ class Departments extends Migration
             $table->id();
             $table->string('name');
             $table->string('code');
-            $table->foreignId('chairman_id');
-            $table->foreignId('office_id');
+            $table->foreignId('chairman_id')->nullable();
+            $table->foreignId('office_id')->nullable();
             $table->timestamps();
         });
     }

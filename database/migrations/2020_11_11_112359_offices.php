@@ -21,7 +21,7 @@ class Offices extends Migration
             $table->time('opening_time');
             $table->time('closing_time');
             $table->string('building');
-            $table->boolean('is_branch');
+            $table->boolean('is_branch')->default(false);
             $table->timestamps();
         });
     }

@@ -64,4 +64,13 @@ class Employee extends Model
   public static function booted()
   {
   }
+
+  public function image()
+  {
+    return $this->hasOne(Image::class, 'id', 'image_id');
+  }
+
+  public function user(){
+      return $this->belongsTo(User::class);
+  }
 }

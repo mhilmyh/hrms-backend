@@ -134,9 +134,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     public function testDatabase()
-{
-    $user = User::factory()->make();
+    {
+        $user = User::factory()->make();
 
-    // Use model in tests...
-}
+        // Use model in tests...
+    }
 }

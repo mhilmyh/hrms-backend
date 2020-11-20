@@ -29,8 +29,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     // User
     $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/', ['uses' => 'UserController@index']);
-        $router->put('/', ['uses' => 'UserController@update']);
-        $router->delete('/', ['uses' => 'UserController@delete']);
+        $router->put('/edit', ['uses' => 'UserController@update']);
+        $router->delete('/delete', ['uses' => 'UserController@delete']);
     });
 
     // Timesheet
@@ -50,7 +50,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     // Images
     $router->group(['prefix' => 'image'], function () use ($router) {
-        $router->post('/', ['uses' => 'UserController@create']);
-        $router->delete('/', ['uses' => 'ImageController@delete']);
+        $router->post('/create', ['uses' => 'ImageController@create']);
+        $router->delete('/delete', ['uses' => 'ImageController@delete']);
     });
 });

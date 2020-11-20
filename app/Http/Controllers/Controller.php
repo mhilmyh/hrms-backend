@@ -15,7 +15,7 @@ class Controller extends BaseController
 
     /**
      * Format response when send to client
-     * 
+     *
      * @param data      only array or null
      * @param status    status code response
      * @param message   message string response
@@ -32,14 +32,14 @@ class Controller extends BaseController
 
     /**
      * Helper function for uploading image
-     * 
+     *
      * @param request   Request object
      * @param entity    Model name
      * @return string
      */
     protected function imageUploadHelper(Request $request, $entity = 'U')
     {
-        if ($request->hasFile('image')) {
+        if ($request->hasFile("image")) {
             $extension = $request->file('image')->getClientOriginalExtension();
             $image_name = $entity . '-' . time() . '-' . Str::random() .  '.' . $extension;
             $success = $request->file('image')->move(
@@ -56,7 +56,7 @@ class Controller extends BaseController
 
     /**
      * Helper function for deleting image
-     * 
+     *
      * @param image_url string url of image
      * @return bool
      */
@@ -75,7 +75,7 @@ class Controller extends BaseController
 
     /**
      * Error response when validation failed
-     * 
+     *
      * @param request   request object
      * @param error     list error
      * @return object

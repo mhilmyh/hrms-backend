@@ -70,7 +70,12 @@ class Employee extends Model
     return $this->hasOne(Image::class, 'id', 'image_id');
   }
 
+    public function address()
+    {
+        return $this->hasOne(Address::class, 'id', 'address_id');
+    }
+
   public function user(){
-      return $this->belongsTo(User::class);
+      return $this->belongsTo(User::class, 'user_id', 'id');
   }
 }

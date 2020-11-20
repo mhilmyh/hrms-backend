@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Employee;
 use App\Models\User;
 use Exception;
@@ -52,8 +53,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // TODO: Get all user and return it from response
-        $users = User::all();
-
+        $users = User::with('employee.address')->get();
         return $this->responseHandler(['users' => $users], 200, $users);
     }
 

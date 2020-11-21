@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Employee;
 use App\Models\Address;
 use Illuminate\Support\Facades\Hash;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -63,44 +63,39 @@ class AuthController extends Controller
   public function login(Request $request)
   {
     $this->validate($request, $this->validateRule['login']);
-   
-    // TODO: find user with certain email
-    $user = User::where('email', $request->email);
 
-    // Get the token
-    $credentials = request(['email', 'password']);
-    if (! $token = auth()->attempt($credentials)) {
-      return response()->json(['error' => 'Unauthorized'], 401);
-    }
+    // find user with certain email
+    $user = User::where('email', $request->input('email'));
 
-    $user->is_login = true;
-    $user.save();
-    
-    // TODO: return JWT token
-    return $this->respondWithToken($token);
+    if (!$user)
+      return $this->responseHandler(null, 404, "User not found");
 
-    return $this->responseHandler(['token' => null]);
+    // check password
+    if (!Hash::check($request->input('password'), $user->password))
+      return $this->responseHandler(null, 400, "Password not match");
+
+    // set token
+    $token = JWTAuth::fromUser($user);
+    return $this->responseHandler(['token' => $token]);
   }
 
   /**
    * Logout controller
    * 
-   * @return void null
+   * @return null
    */
-  public function logout(Request $request)
+  public function logout()
   {
-    // TODO: find user with id is equal to authenticated id
-    $user = auth()->user();
-    
-    // TODO: set is_login attribute to false
+    // check authenticated user
+    if (!$auth = auth()->user())
+      return $this->responseHandler(null, 401, 'Token invalid');
+
+    // set logout
+    $user = User::find($auth->id);
     $user->is_login = false;
-    $user.save();
+    $user->save();
 
-    auth()->logout();
-
-    return response()->json(['message' => 'Successfully logged out']);
-    
-    //return $this->responseHandler();
+    return $this->responseHandler(null, 200, 'Successfully logout');
   }
 
   /**
@@ -110,64 +105,55 @@ class AuthController extends Controller
    */
   public function user(Request $request)
   {
-    // TODO: find user from authenticated id
-    //$user = JWTAuth::toUser($token);
-    $user = auth()->user();
+    // check authenticated user
+    if (!$auth = auth()->user())
+      return $this->responseHandler(null, 401, 'Token invalid');
 
-    // TODO: return user as a response
-    return response()->json(compact('user'));
+    $user = User::find($auth->id);
 
-    //return $this->responseHandler();
+    return $this->responseHandler(['user' => $user]);
   }
 
   /**
    * Register controller
    * 
-   * @return true value
+   * @return null
    */
   public function register(Request $request)
   {
     $this->validate($request, $this->validateRule['register']);
 
-    // TODO: create user
-    $email = $request->input("email");
-    $password = $request->input("password");
+    $user = User::create([
+      "email" => $request->input("email"),
+      "password" => $request->input("password")
+    ]);
 
-    $data = [
-      "email" => $email,
-      "password" => $password
-    ];
-    User::create($data);
+    $address = Address::create([
+      'country' => $request->input('country'),
+      'province' => $request->input('province'),
+      'city' => $request->input('city'),
+      'subdistrict' => $request->input('subdistrict'),
+      'postal_code' => $request->input('postal_code'),
+      'street' => $request->input('street'),
+    ]);
 
-    // TODO: create employee
-    $user = User::where('email', $request->email);
-    Employee::create([
-      'first_name' => $request->first_name,
-      'mid_name' => $request->mid_name,
-      'last_name' => $request->last_name,
-      'phone' => $request->phone,
-      'gender' => $request->gender,
-      'birthday' =>$request->birthday,
-      'salary' => $request->salary,
-      'job_position' => $request->job_position,
-      'rating' => $request->rating,
+    $employee = Employee::create([
+      'first_name' => $request->input('first_name'),
+      'mid_name' => $request->input('mid_name'),
+      'last_name' => $request->input('last_name'),
+      'phone' => $request->input('phone'),
+      'gender' => $request->input('gender'),
+      'birthday' => $request->input('birthday'),
+      'salary' => $request->input('salary'),
+      'job_position' => $request->input('job_position'),
+      'rating' => $request->input('rating'),
       'user_id' => $user->id,
+      'address_id' => $address->id
     ]);
 
-    // TODO: create address
-    Address::create([
-      'country' => $request->country,
-      'province' => $request->province,
-      'city' => $request->city,
-      'subdistrict' => $request->subdistrict,
-      'postal_code' => $request->postal_code,
-      'street' => $request->street,
-    ]);
+    $user->employee_id = $employee->id;
+    $user->save();
 
-    // TODO: save
-
-    return $this->responseHandler([
-      'value' => true
-    ], 201, 'Successfully register user');
+    return $this->responseHandler(null, 201, 'Successfully register user');
   }
 }

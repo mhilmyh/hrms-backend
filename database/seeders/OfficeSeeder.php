@@ -14,6 +14,6 @@ class OfficeSeeder extends Seeder
      */
     public function run()
     {
-        Office::factory()->times(10)->create();
+        Office::factory()->times(3)->create();
     }
 }

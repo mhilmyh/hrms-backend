@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Image extends Model
 {
 
-    use HasFactory;
+  use HasFactory;
   /**
    * The table associated with the model.
    *
    * @var string
    */
   protected $table = 'images';
+  public $timestamps = false;
 
   /**
    * The attributes that are mass assignable.
@@ -54,13 +55,5 @@ class Image extends Model
    */
   public static function booted()
   {
-  }
-
-  public function employee() {
-      return $this->belongsTo('App\Models\Employee', 'id');
-  }
-
-  public function office(){
-    return $this->belongsTo('App\Models\Office', 'id');
   }
 }

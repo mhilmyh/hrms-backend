@@ -19,7 +19,6 @@ class Images extends Migration
             $table->id();
             $table->string('alt');
             $table->string('url');
-            $table->timestamps();
         });
     }
 

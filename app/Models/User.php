@@ -9,11 +9,11 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Auth\Authorizable;
 
 use App\Models\Employee;
 use App\Models\Notification;
-use App\Models\Email;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
@@ -99,7 +99,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public static function booted()
     {
         static::saving(function ($model) {
-            $model->password = Hash::make($model->password);
+            // $model->password = Hash::make($model->password);
         });
     }
 
@@ -116,7 +116,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * Notification user
      *
-     * @return array
+     * @return object
      */
     public function notifications()
     {
@@ -124,19 +124,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Email send to this user
-     *
-     * @return array
+     * Delete model with relation
+     * 
+     * @return bool
      */
-    public function emails()
+    public function delete()
     {
-        return $this->hasMany(Email::class, 'user_id', 'id');
-    }
+        DB::beginTransaction();
 
-    public function testDatabase()
-    {
-        $user = User::factory()->make();
+        $this->employee()->delete();
 
-        // Use model in tests...
+        $this->notifications()->each(function ($notification) {
+            $notification->delete();
+        });
+
+        $result = parent::delete();
+
+        DB::commit();
+
+        return $result;
     }
 }

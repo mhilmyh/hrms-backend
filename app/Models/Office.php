@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Department;
 use App\Models\Address;
@@ -11,7 +12,7 @@ use App\Models\Image;
 
 class Office extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
   /**
    * The table associated with the model.
@@ -102,10 +103,34 @@ class Office extends Model
   /**
    * Departments of office
    *
-   * @return array
+   * @return object
    */
   public function departments()
   {
     return $this->hasMany(Department::class, 'id', 'address_id');
+  }
+
+  /**
+   * Delete model with relation
+   * 
+   * @return bool
+   */
+  public function delete()
+  {
+    DB::beginTransaction();
+
+    $this->image()->delete();
+
+    $this->address()->delete();
+
+    $this->departments()->each(function ($activity) {
+      $activity->delete();
+    });
+
+    $result = parent::delete();
+
+    DB::commit();
+
+    return $result;
   }
 }

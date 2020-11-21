@@ -17,10 +17,9 @@ class Addresses extends Migration
     {
         Schema::create($this->table_name, function (Blueprint $table) {
             $table->id();
-            $table->string('country');
+            $table->string('country')->default('indonesia');
             $table->string('province');
             $table->string('city');
-            $table->string('subdistrict');
             $table->string('postal_code');
             $table->string('street');
         });

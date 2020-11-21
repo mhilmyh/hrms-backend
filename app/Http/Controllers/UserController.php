@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 use App\Models\Address;
 use App\Models\Employee;
 use App\Models\User;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-
-use function PHPUnit\Framework\throwException;
 
 class UserController extends Controller
 {
@@ -18,17 +16,23 @@ class UserController extends Controller
             'email' => 'sometimes|nullable|email|unique:users',
             'password' => 'nullable|string|min:6',
             'secret' => 'nullable|string',
+
             'first_name' => 'nullable|string',
             'mid_name' => 'nullable|string',
             'last_name' => 'nullable|string',
             'phone' => 'nullable|string|between:8,16',
-            'gender' => 'nullable|in:M,F,U',
+            'gender' => 'nullable|in:Male,Female,Unknown',
             'birthday' => 'nullable|date',
             'salary' => 'nullable|integer',
             'job_position' => 'nullable|string',
             'rating' => 'nullable|numeric',
-            'image_id' => 'nullable|integer',
-            'address_id' => 'nullable|integer',
+
+            'country' => 'nullable|string',
+            'province' => 'nullable|string',
+            'city' => 'nullable|string',
+            'subdistrict' => 'nullable|string',
+            'postal_code' => 'nullable|string',
+
             'supervisor_id' => 'nullable|integer',
             'department_id' => 'nullable|integer',
         ],
@@ -40,9 +44,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => [
-            'index'
-        ]]);
+        $this->middleware('auth');
     }
 
     /**
@@ -50,11 +52,17 @@ class UserController extends Controller
      *
      * @return array users
      */
-    public function index(Request $request)
+    public function index()
     {
-        // TODO: Get all user and return it from response
-        $users = User::with('employee.address')->get();
-        return $this->responseHandler(['users' => $users], 200, $users);
+        // get all user
+        $users = User::with([
+            'employee.address',
+            'employee.supervisor',
+            'employee.department',
+            'employee.image'
+        ])->get();
+
+        return $this->responseHandler(['users' => $users]);
     }
 
     /**
@@ -62,17 +70,20 @@ class UserController extends Controller
      *
      * @return object user
      */
-    public function update(Request $request)
+    public function update(Request $request, $id = null)
     {
-        $id = intval($request->query('id'));
+        $this->validate($request, $this->validateRule['update']);
 
-        // TODO: find one user
+        // find user, employee and address
         $user = User::find($id);
         $employee = Employee::find($user->employee_id);
+        $address = Address::find($employee->address_id);
 
-        // TODO: update all the data and save
+        // update user
         $user->email = $request->input("email") == null ? $user->email : $request->input("email");
-        $user->password = $request->input("password") == null ? $user->password : $request->input("password");
+        $user->password = $request->input("password") == null ? $user->password : Hash::make($request->input('password'));
+
+        // update employee
         $employee->first_name = $request->input("first_name") == null ? $employee->first_name : $request->input("first_name");
         $employee->mid_name = $request->input("mid_name") == null ? $employee->mid_name : $request->input("mid_name");
         $employee->last_name = $request->input("last_name") == null ? $employee->last_name : $request->input("last_name");
@@ -82,26 +93,39 @@ class UserController extends Controller
         $employee->salary = $request->input("salary") == null ? $employee->salary : $request->input("salary");
         $employee->job_position = $request->input("job_position") == null ? $employee->job_position : $request->input("job_position");
         $employee->rating = $request->input("rating") == null ? $employee->rating : $request->input("rating");
-        $this->validate($request, $this->validateRule['update']);
 
+        // update address
+        $address->country = $request->input("country") === null ? $address->country : $request->input("country");
+        $address->province = $request->input("province") === null ? $address->province : $request->input("province");
+        $address->city = $request->input("city") === null ? $address->city : $request->input("city");
+        $address->postal_code = $request->input("postal_code") === null ? $address->postal_code : $request->input("postal_code");
+        $address->street = $request->input("street") === null ? $address->street : $request->input("street");
+
+        // save 
+        $address->save();
         $employee->save();
         $user->save();
 
-        return $this->responseHandler([$user, $employee], 200, "Successfully update user");
+        return $this->responseHandler(null, 200, "Successfully update user");
     }
 
     /**
      * Delete user
      *
-     * @return boolean value
+     * @return null
      */
-    public function delete(Request $request)
+    public function delete($id = null)
     {
-        $id = intval($request->query('id'));
-        // TODO: find and delete user
-        Employee::where('user_id', $id)->delete();
-        User::find($id)->delete();
+        // find user
+        $user = User::find($id);
 
-        return $this->responseHandler(['value' => true], 200, "Successfully delete user");
+        if (!$user) {
+            return $this->responseHandler(null, 404, 'User not found');
+        }
+
+        // delete user
+        $user->delete();
+
+        return $this->responseHandler(null, 200, "Successfully delete user");
     }
 }

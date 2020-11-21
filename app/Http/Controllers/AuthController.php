@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Employee;
 use App\Models\Address;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 
 class AuthController extends Controller
@@ -57,13 +58,13 @@ class AuthController extends Controller
 
   /**
    * Login controller
-   * 
+   *
    * @return string token
    */
   public function login(Request $request)
   {
     $this->validate($request, $this->validateRule['login']);
-   
+
     // TODO: find user with certain email
     $user = User::where('email', $request->email);
 
@@ -75,7 +76,7 @@ class AuthController extends Controller
 
     $user->is_login = true;
     $user.save();
-    
+
     // TODO: return JWT token
     return $this->respondWithToken($token);
 
@@ -84,14 +85,14 @@ class AuthController extends Controller
 
   /**
    * Logout controller
-   * 
+   *
    * @return void null
    */
   public function logout(Request $request)
   {
     // TODO: find user with id is equal to authenticated id
     $user = auth()->user();
-    
+
     // TODO: set is_login attribute to false
     $user->is_login = false;
     $user.save();
@@ -99,13 +100,13 @@ class AuthController extends Controller
     auth()->logout();
 
     return response()->json(['message' => 'Successfully logged out']);
-    
+
     //return $this->responseHandler();
   }
 
   /**
    * Get user controller
-   * 
+   *
    * @return object user
    */
   public function user(Request $request)
@@ -122,7 +123,7 @@ class AuthController extends Controller
 
   /**
    * Register controller
-   * 
+   *
    * @return true value
    */
   public function register(Request $request)
@@ -141,6 +142,7 @@ class AuthController extends Controller
 
     // TODO: create employee
     $user = User::where('email', $request->email);
+    echo $user;
     Employee::create([
       'first_name' => $request->first_name,
       'mid_name' => $request->mid_name,

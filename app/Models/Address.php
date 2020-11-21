@@ -60,4 +60,20 @@ class Address extends Model
   public static function booted()
   {
   }
+
+  public function employee() {
+      return $this->belongsTo(Employee::class, 'address_id', 'id');
+  }
+
+  public function userAddress()
+    {
+        return $this->hasOneThrough(
+            'App\Models\User',
+            'App\Models\Employee',
+            'address_id',
+            'employee_id',
+            'id',
+            'id'
+        );
+    }
 }

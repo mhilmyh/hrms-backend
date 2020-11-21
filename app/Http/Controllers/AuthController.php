@@ -57,7 +57,7 @@ class AuthController extends Controller
 
   /**
    * Login controller
-   * 
+   *
    * @return string token
    */
   public function login(Request $request)
@@ -100,7 +100,7 @@ class AuthController extends Controller
 
   /**
    * Get user controller
-   * 
+   *
    * @return object user
    */
   public function user(Request $request)

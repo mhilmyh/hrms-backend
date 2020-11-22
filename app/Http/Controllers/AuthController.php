@@ -26,7 +26,7 @@ class AuthController extends Controller
 
       'first_name' => 'required|string',
       'mid_name' => 'nullable|string',
-      'last_name' => 'required|string',
+      'last_name' => 'nullable|string',
       'phone' => 'required|string|between:8,16',
       'gender' => 'required|in:Male,Female,Unknown',
       'birthday' => 'required|date',

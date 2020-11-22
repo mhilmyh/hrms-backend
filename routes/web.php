@@ -18,6 +18,9 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
+    // Dashboard
+    $router->get('/dashboard', ['uses' => 'GeneralController@dashboard']);
+
     // Auth
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('/login', ['uses' => 'AuthController@login']);

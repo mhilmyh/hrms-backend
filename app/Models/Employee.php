@@ -63,6 +63,14 @@ class Employee extends Model
   protected $hidden = [];
 
   /**
+   * Append new value to response
+   * 
+   * @var array
+   */
+  protected $appends = ['full_name'];
+
+
+  /**
    * The "booted" method of the model
    *
    * @return void
@@ -70,6 +78,21 @@ class Employee extends Model
   public static function booted()
   {
   }
+
+  /**
+   * Computed property eloquent
+   * 
+   * @return string
+   */
+  public function getFullNameAttribute()
+  {
+    if (empty($this->mid_name) && !empty($this->last_name))
+      return $this->first_name . ' ' . $this->last_name;
+    else if (empty($this->mid_name) && empty($this->last_name))
+      return $this->first_name;
+    return $this->first_name . ' ' . $this->mid_name . ' ' . $this->last_name;
+  }
+
 
   /**
    * User of employee

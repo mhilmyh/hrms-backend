@@ -16,10 +16,10 @@ class EmployeeSeeder extends Seeder
     public function run()
     {
         Employee::factory()
-            ->times(20)
+            ->times(5)
             ->create();
-        $edtEmp = Employee::find(21);
-        $edtEmp->user_id = 26;
+        $edtEmp = Employee::find(1);
+        $edtEmp->user_id = 1;
         $edtEmp->save();
     }
 }

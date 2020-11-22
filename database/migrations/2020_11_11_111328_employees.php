@@ -18,14 +18,14 @@ class Employees extends Migration
         Schema::create($this->table_name, function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
-            $table->string('mid_name');
+            $table->string('mid_name')->nullable();
             $table->string('last_name');
             $table->string('phone');
-            $table->enum('gender', ['M', 'F', 'U']);
+            $table->enum('gender', ['Male', 'Female', 'Unknown'])->default('Unknown');
             $table->date('birthday');
-            $table->bigInteger('salary');
-            $table->string('job_position');
-            $table->float('rating');
+            $table->bigInteger('salary')->default(0);
+            $table->string('job_position')->nullable();
+            $table->float('rating')->default(0.0);
             $table->foreignId('user_id');
             $table->foreignId('image_id')->nullable();
             $table->foreignId('address_id')->nullable();

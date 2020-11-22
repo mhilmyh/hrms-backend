@@ -39,7 +39,7 @@ class Controller extends BaseController
      */
     protected function imageUploadHelper(Request $request, $entity = 'U')
     {
-        if ($request->hasFile("image")) {
+        if ($request->hasFile('image')) {
             $extension = $request->file('image')->getClientOriginalExtension();
             $image_name = $entity . '-' . time() . '-' . Str::random() .  '.' . $extension;
             $success = $request->file('image')->move(
@@ -82,10 +82,9 @@ class Controller extends BaseController
      */
     protected function buildFailedValidationResponse(Request $request, array $errors)
     {
-        return [
-            "code" => 400,
-            "message" => "Periksa kembali inputan anda",
+        return response()->json([
+            "message" => "Check your input",
             "errors" => $errors
-        ];
+        ], 400);
     }
 }

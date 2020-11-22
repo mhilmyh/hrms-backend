@@ -18,7 +18,7 @@ class Users extends Migration
         Schema::create($this->table_name, function (Blueprint $table) {
             $table->id();
             $table->string('email');
-            $table->string('password');
+            $table->string('password', 60);
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_login')->default(false);
             $table->foreignId('employee_id')->nullable();

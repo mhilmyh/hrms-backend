@@ -2,9 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
+
+use App\Models\Employee;
+use App\Models\User;
 
 class UserFactory extends Factory
 {
@@ -24,7 +26,7 @@ class UserFactory extends Factory
     {
         return [
             'email' => $this->faker->unique()->safeEmail,
-            'password' => Str::random(15)
+            'password' => Str::random(15),
         ];
     }
 }

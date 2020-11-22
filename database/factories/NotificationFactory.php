@@ -24,7 +24,6 @@ class NotificationFactory extends Factory
     {
         return [
             'message' => $this->faker->sentence,
-            'is_read' => $this->faker->boolean,
             'user_id' => User::factory()
         ];
     }

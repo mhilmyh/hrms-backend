@@ -11,14 +11,16 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EmployeeFactory extends Factory
 {
-    function rand_float($st_num=0,$end_num=5,$mul=100) {
+    function rand_float($st_num = 0, $end_num = 5, $mul = 100)
+    {
         if ($st_num > $end_num) {
             return false;
         }
-        return mt_rand($st_num*$mul,$end_num*$mul)/$mul;
+        return mt_rand($st_num * $mul, $end_num * $mul) / $mul;
     }
 
-    function delVal($del_val, $arr){
+    function delVal($del_val, $arr)
+    {
         if (($key = array_search($del_val, $arr)) !== false) {
             unset($arr[$key]);
         }
@@ -38,18 +40,18 @@ class EmployeeFactory extends Factory
      */
     public function definition()
     {
-        $gender = $this->faker->randomElement(['male', 'female']);
-        $genderNotation = ucfirst($gender)[0];
+        $gender = $this->faker->randomElement(['Male', 'Female']);
         $bd = $this->faker->dateTimeBetween('-90 years', '-15years');
         $allUsers = User::all()->pluck("id")->toArray();
         $user = $this->faker->randomElement($allUsers);
         $otherUser = $this->faker->randomElement($this->delVal($user, $allUsers));
+
         return [
             'first_name' => $this->faker->firstName($gender),
             'mid_name' => $this->faker->firstName($gender),
             'last_name' => $this->faker->lastName($gender),
             'phone' => $this->faker->phoneNumber,
-            'gender' => $genderNotation,
+            'gender' => $gender,
             'birthday' => $bd->format("Y-m-d"),
             'salary' => mt_rand(1000000, 20000000),
             'job_position' => $this->faker->jobTitle,

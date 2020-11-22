@@ -171,11 +171,11 @@ class AuthController extends Controller
   }
 
   /**
-   * Notification controller
+   * Clear notification controller
    * 
    * @return null
    */
-  public function notification($id = null)
+  public function clear($id = null)
   {
     // find notification
     $notification = Notification::find($id);
@@ -188,5 +188,14 @@ class AuthController extends Controller
     $notification->delete();
 
     return $this->responseHandler(null, 200, 'Notification removed');
+  }
+
+  /**
+   * Notification controller
+   */
+  public function notification()
+  {
+    $notifications = Notification::where('user_id', auth()->user()->id)->get();
+    return $this->responseHandler(['notifications' => $notifications]);
   }
 }

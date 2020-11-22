@@ -24,7 +24,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->post('/logout', ['uses' => 'AuthController@logout']);
         $router->post('/register', ['uses' => 'AuthController@register']);
         $router->get('/user', ['uses' => 'AuthController@user']);
-        $router->delete('/notification/{id}', ['uses' => 'AuthController@notification']);
+        $router->get('/notification', ['uses' => 'AuthController@notification']);
+        $router->delete('/notification/{id}', ['uses' => 'AuthController@clear']);
     });
 
     // Company

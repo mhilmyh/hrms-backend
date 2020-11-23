@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
+use App\Models\Timesheet;
 use Illuminate\Http\Request;
 
 class TimesheetController extends Controller
 {
     private $validateRule = [
-        'created' => [
+        'create' => [
             'activities' => 'required|array',
             'activities.*.desc' => 'required|string',
             'activities.*.start_time' => 'required|date_format:H:i',
@@ -33,11 +35,10 @@ class TimesheetController extends Controller
      * 
      * @return array timesheet
      */
-    public function index(Request $request)
+    public function index()
     {
-        // TODO: get all time sheet
-
-        $this->responseHandler(['timesheets' => null]);
+        $timesheets = Timesheet::with(['user.employee', 'activities'])->get();
+        return $this->responseHandler(['timesheets' => $timesheets]);
     }
 
     /**
@@ -49,9 +50,19 @@ class TimesheetController extends Controller
     {
         $this->validate($request, $this->validateRule['create']);
 
-        // TODO: store activity and then store timesheet
+        $timesheet = Timesheet::create([
+            'user_id' => $request->input('user_id')
+        ]);
 
-        $this->responseHandler();
+        $activities = $request->input('activities');
+        $construct = function ($activity) use ($timesheet) {
+            return array_merge($activity, ['timesheet_id' => $timesheet->id]);
+        };
+        $data = array_map($construct, $activities);
+
+        Activity::insert($data);
+
+        return $this->responseHandler(null, 200, 'Successfully create timesheet');
     }
 
     /**
@@ -59,10 +70,16 @@ class TimesheetController extends Controller
      * 
      * @return boolean value
      */
-    public function delete(Request $request)
+    public function delete($id = null)
     {
-        // TODO: find and delete timesheet
+        if (!auth()->user()->is_admin)
+            return $this->responseHandler(null, 400, 'You are not admin');
 
-        $this->responseHandler(['value' => true]);
+        $success = Timesheet::destroy($id);
+
+        if (!$success)
+            return $this->responseHandler(null, 400, 'Failed to delete timesheet');
+
+        return $this->responseHandler(null, 200, 'Timesheet deleted successfully');
     }
 }

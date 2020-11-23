@@ -34,9 +34,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     // Company
     $router->group(['prefix' => 'company'], function () use ($router) {
         $router->get('/', ['uses' => 'CompanyController@index']);
-        $router->post('/', ['uses' => 'CompanyController@create']);
-        $router->put('/', ['uses' => 'CompanyController@update']);
-        $router->delete('/', ['uses' => 'CompanyController@delete']);
+        $router->post('/{identifier}', ['uses' => 'CompanyController@create']);
+        $router->put('/{identifier}', ['uses' => 'CompanyController@update']);
+        $router->delete('/{identifier}/{id}', ['uses' => 'CompanyController@delete']);
     });
 
     // Image
@@ -49,13 +49,13 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['prefix' => 'timesheet'], function () use ($router) {
         $router->get('/', ['uses' => 'TimesheetController@index']);
         $router->post('/', ['uses' => 'TimesheetController@create']);
-        $router->delete('/', ['uses' => 'TimesheetController@delete']);
+        $router->delete('/{id}', ['uses' => 'TimesheetController@delete']);
     });
 
     // User
     $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/', ['uses' => 'UserController@index']);
         $router->put('/', ['uses' => 'UserController@update']);
-        $router->delete('/', ['uses' => 'UserController@delete']);
+        $router->delete('/{id}', ['uses' => 'UserController@delete']);
     });
 });

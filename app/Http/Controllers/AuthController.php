@@ -68,20 +68,17 @@ class AuthController extends Controller
   {
     $this->validate($request, $this->validateRule['login']);
 
-    // find user with certain email
     $user = User::where('email', $request->input('email'))->first();
 
     if (!$user)
       return $this->responseHandler(null, 404, 'User not found');
 
-    // check password
     if (!Hash::check($request->input('password'), $user->password))
       return $this->responseHandler(null, 400, 'Password not match');
 
     $user->is_login = true;
     $user->save();
 
-    // set token
     $token = JWTAuth::fromUser($user);
     return $this->responseHandler(['token' => $token]);
   }
@@ -93,11 +90,9 @@ class AuthController extends Controller
    */
   public function logout()
   {
-    // check authenticated user
     if (!$auth = auth()->user())
       return $this->responseHandler(null, 401, 'Token invalid');
 
-    // set logout
     $user = User::find($auth->id);
     $user->is_login = false;
     $user->save();
@@ -112,7 +107,6 @@ class AuthController extends Controller
    */
   public function user()
   {
-    // check authenticated user
     if (!$auth = auth()->user())
       return $this->responseHandler(null, 401, 'Token invalid');
 
@@ -135,14 +129,12 @@ class AuthController extends Controller
   {
     $this->validate($request, $this->validateRule['register']);
 
-    // create user
     $user = User::create([
       'email' => $request->input('email'),
       'password' => Hash::make($request->input('password')),
       'is_admin' => env('ADMIN_SECRET') == $request->input('secret')
     ]);
 
-    // create address
     $address = Address::create([
       'country' => $request->input('country'),
       'province' => $request->input('province'),
@@ -151,7 +143,6 @@ class AuthController extends Controller
       'street' => $request->input('street'),
     ]);
 
-    // create employee
     $employee = Employee::create([
       'first_name' => $request->input('first_name'),
       'mid_name' => $request->input('mid_name'),
@@ -163,7 +154,6 @@ class AuthController extends Controller
       'address_id' => $address->id
     ]);
 
-    // save employee id
     $user->employee_id = $employee->id;
     $user->save();
 
@@ -177,15 +167,10 @@ class AuthController extends Controller
    */
   public function clear($id = null)
   {
-    // find notification
-    $notification = Notification::find($id);
+    $success = Notification::destroy($id);
 
-    if (!$notification) {
-      return $this->responseHandler(null, 404, 'Notifcation not found');
-    }
-
-    // delete notification
-    $notification->delete();
+    if (!$success)
+      return $this->responseHandler(null, 400, 'Failed to delete notification');
 
     return $this->responseHandler(null, 200, 'Notification removed');
   }

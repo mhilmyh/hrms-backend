@@ -76,8 +76,8 @@ class Department extends Model
    *
    * @return array
    */
-  public function offices()
+  public function office()
   {
-    return $this->hasMany(Office::class, 'id', 'office_id');
+    return $this->hasOne(Office::class, 'id', 'office_id');
   }
 }

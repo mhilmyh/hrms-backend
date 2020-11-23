@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\User;
-use App\Models\Activities;
+use App\Models\Activity;
 
 class Timesheet extends Model
 {
@@ -81,7 +81,7 @@ class Timesheet extends Model
    */
   public function activities()
   {
-    return $this->hasMany(Activities::class, 'timesheet_id', 'id');
+    return $this->hasMany(Activity::class, 'timesheet_id', 'id');
   }
 
   /**

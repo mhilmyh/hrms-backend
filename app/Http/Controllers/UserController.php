@@ -80,19 +80,19 @@ class UserController extends Controller
         $address = Address::find($employee->address_id);
 
         // update user
-        $user->email = $request->input("email") == null ? $user->email : $request->input("email");
-        $user->password = $request->input("password") == null ? $user->password : Hash::make($request->input('password'));
+        $user->email = $request->input("email") === null ? $user->email : $request->input("email");
+        $user->password = $request->input("password") === null ? $user->password : Hash::make($request->input('password'));
 
         // update employee
-        $employee->first_name = $request->input("first_name") == null ? $employee->first_name : $request->input("first_name");
-        $employee->mid_name = $request->input("mid_name") == null ? $employee->mid_name : $request->input("mid_name");
-        $employee->last_name = $request->input("last_name") == null ? $employee->last_name : $request->input("last_name");
-        $employee->phone = $request->input("phone") == null ? $employee->phone : $request->input("phone");
-        $employee->gender = $request->input("gender") == null ? $employee->gender : $request->input("gender");
-        $employee->birthday = $request->input("birthday") == null ? $employee->birthday : $request->input("birthday");
-        $employee->salary = $request->input("salary") == null ? $employee->salary : $request->input("salary");
-        $employee->job_position = $request->input("job_position") == null ? $employee->job_position : $request->input("job_position");
-        $employee->rating = $request->input("rating") == null ? $employee->rating : $request->input("rating");
+        $employee->first_name = $request->input("first_name") === null ? $employee->first_name : $request->input("first_name");
+        $employee->mid_name = $request->input("mid_name") === null ? $employee->mid_name : $request->input("mid_name");
+        $employee->last_name = $request->input("last_name") === null ? $employee->last_name : $request->input("last_name");
+        $employee->phone = $request->input("phone") === null ? $employee->phone : $request->input("phone");
+        $employee->gender = $request->input("gender") === null ? $employee->gender : $request->input("gender");
+        $employee->birthday = $request->input("birthday") === null ? $employee->birthday : $request->input("birthday");
+        $employee->salary = $request->input("salary") === null ? $employee->salary : $request->input("salary");
+        $employee->job_position = $request->input("job_position") === null ? $employee->job_position : $request->input("job_position");
+        $employee->rating = $request->input("rating") === null ? $employee->rating : $request->input("rating");
 
         // update address
         $address->country = $request->input("country") === null ? $address->country : $request->input("country");
@@ -116,15 +116,10 @@ class UserController extends Controller
      */
     public function delete($id = null)
     {
-        // find user
-        $user = User::find($id);
+        $success = User::destroy($id);
 
-        if (!$user) {
-            return $this->responseHandler(null, 404, 'User not found');
-        }
-
-        // delete user
-        $user->delete();
+        if (!$success)
+            return $this->responseHandler(null, 400, 'Failed to delete user');
 
         return $this->responseHandler(null, 200, "Successfully delete user");
     }

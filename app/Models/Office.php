@@ -31,10 +31,8 @@ class Office extends Model
     'name',
     'opening_time',
     'closing_time',
-    'build',
+    'building',
     'is_branch',
-    'head_office_id',
-    'image_id',
     'address_id',
   ];
 
@@ -68,26 +66,6 @@ class Office extends Model
    */
   public static function booted()
   {
-  }
-
-  /**
-   * The chairman of department
-   *
-   * @return object
-   */
-  public function head_office()
-  {
-    return $this->hasOne(Office::class, 'id', 'head_office_id');
-  }
-
-  /**
-   * Image for office picture
-   *
-   * @return object
-   */
-  public function image()
-  {
-    return $this->hasOne(Image::class, 'id', 'image_id');
   }
 
   /**

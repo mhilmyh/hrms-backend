@@ -34,6 +34,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     // Company
     $router->group(['prefix' => 'company'], function () use ($router) {
         $router->get('/', ['uses' => 'CompanyController@index']);
+        $router->get('/offices', ['uses' => 'CompanyController@offices']);
+        $router->get('/departments', ['uses' => 'CompanyController@departments']);
         $router->post('/{identifier}', ['uses' => 'CompanyController@create']);
         $router->put('/{identifier}', ['uses' => 'CompanyController@update']);
         $router->delete('/{identifier}/{id}', ['uses' => 'CompanyController@delete']);

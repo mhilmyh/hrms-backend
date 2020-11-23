@@ -15,10 +15,8 @@ class CompanyController extends Controller
                 'name' => 'required|string',
                 'opening_time' => 'required|date_format:H:i',
                 'closing_time' => 'required|date_format:H:i',
-                'building' => 'required|string',
+                'building' => 'nullable|string',
                 'is_branch' => 'nullable|boolean',
-                'head_office_id' => 'nullable|integer',
-                'image_id' => 'nullable|integer',
                 'country' => 'required|string',
                 'province' => 'required|string',
                 'city' => 'required|string',
@@ -31,8 +29,6 @@ class CompanyController extends Controller
                 'closing_time' => 'nullable|date_format:H:i',
                 'building' => 'nullable|string',
                 'is_branch' => 'nullable|boolean',
-                'head_office_id' => 'nullable|integer',
-                'image_id' => 'nullable|integer',
                 'country' => 'nullable|string',
                 'province' => 'nullable|string',
                 'city' => 'nullable|string',
@@ -79,6 +75,30 @@ class CompanyController extends Controller
         $departments = Department::with(['chairman.employee', 'office'])->get();
 
         return $this->responseHandler(['offices' => $offices, 'departments' => $departments]);
+    }
+
+    /**
+     * Get offices
+     * 
+     * @return array offices
+     */
+    public function offices()
+    {
+        $offices = Office::all();
+
+        return $this->responseHandler(['offices' => $offices]);
+    }
+
+    /**
+     * Get departments
+     * 
+     * @return array departments
+     */
+    public function departments()
+    {
+        $departments = Department::all();
+
+        return $this->responseHandler(['departments' => $departments]);
     }
 
     /**

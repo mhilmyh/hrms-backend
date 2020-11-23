@@ -20,8 +20,9 @@ class Offices extends Migration
             $table->string('name');
             $table->time('opening_time');
             $table->time('closing_time');
-            $table->string('building');
+            $table->string('building')->nullable();
             $table->boolean('is_branch')->default(false);
+            $table->foreignId('address_id');
             $table->timestamps();
         });
     }

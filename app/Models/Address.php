@@ -52,11 +52,28 @@ class Address extends Model
   protected $hidden = [];
 
   /**
+   * Append new value to response
+   * 
+   * @var array
+   */
+  protected $appends = ['full_address'];
+
+  /**
    * The "booted" method of the model
    *
    * @return void
    */
   public static function booted()
   {
+  }
+
+  /**
+   * Computed property eloquent
+   * 
+   * @return string
+   */
+  public function getFullAddressAttribute()
+  {
+    return $this->country . ', ' . $this->province . ', ' . $this->city . ', ' . $this->postal_code . ', ' . $this->street;
   }
 }

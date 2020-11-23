@@ -26,9 +26,10 @@ class OfficeFactory extends Factory
         return [
             'name' => $this->faker->company,
             'opening_time' => $start_time->format('H:i'),
-            'closing_time' => $start_time->addHours( $this->faker->numberBetween( 6, 10 ) )->format('H:i'),
+            'closing_time' => $start_time->addHours($this->faker->numberBetween(6, 10))->format('H:i'),
             'building' => "BuildingName",
-            'is_branch' => true
+            'is_branch' => true,
+            'address_id' => 1
         ];
     }
 }

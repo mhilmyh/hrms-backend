@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Department;
 use App\Models\Office;
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ class CompanyController extends Controller
                 'country' => 'required|string',
                 'province' => 'required|string',
                 'city' => 'required|string',
-                'subdistrict' => 'required|string',
                 'postal_code' => 'required|string',
                 'street' => 'required|string'
             ],
@@ -36,7 +36,6 @@ class CompanyController extends Controller
                 'country' => 'nullable|string',
                 'province' => 'nullable|string',
                 'city' => 'nullable|string',
-                'subdistrict' => 'nullable|string',
                 'postal_code' => 'nullable|string',
                 'street' => 'nullable|string'
             ],
@@ -87,19 +86,38 @@ class CompanyController extends Controller
      * 
      * @return object office or department
      */
-    public function create(Request $request, $identifier = "")
+    public function create(Request $request, $identifier = '')
     {
         if (!auth()->user()->is_admin)
             return $this->responseHandler(null, 400, 'You are not admin');
 
         $this->validate($request, $this->validateRule[$identifier]['create']);
 
-        if ($identifier === "office")
-            Office::create($request->all());
-        else if ($identifier === "department")
-            Department::create($request->all());
-        else
-            return $this->responseHandler(null, 404, "Wrong identifier");
+        if ($identifier === 'office') {
+            Office::create([
+                'name' => $request->input('name'),
+                'opening_time' => $request->input('opening_time'),
+                'closing_time' => $request->input('closing_time'),
+                'building' => $request->input('building'),
+                'is_branch' => $request->input('is_branch'),
+                'head_office_id' => $request->input('head_office_id'),
+            ]);
+            Address::create([
+                'country' => $request->input('country'),
+                'province' => $request->input('province'),
+                'city' => $request->input('city'),
+                'postal_code' => $request->input('postal_code'),
+                'street' => $request->input('street'),
+            ]);
+        } else if ($identifier === 'department') {
+            Department::create([
+                'name' => $request->input('name'),
+                'code' => $request->input('code'),
+                'chairman_id' => $request->input('chairman_id'),
+                'office_id' => $request->input('office_id'),
+            ]);
+        } else
+            return $this->responseHandler(null, 404, 'Wrong identifier');
 
         return $this->responseHandler(null, 200, 'Successfully create ' . $identifier);
     }
@@ -109,19 +127,21 @@ class CompanyController extends Controller
      * 
      * @return object updated office or department
      */
-    public function update(Request $request, $identifier = "")
+    public function update(Request $request, $identifier = '')
     {
         if (!auth()->user()->is_admin)
             return $this->responseHandler(null, 400, 'You are not admin');
 
         $this->validate($request, $this->validateRule[$identifier]['update']);
 
-        if ($identifier === "office")
-            Office::create($request->all());
-        else if ($identifier === "department")
-            Department::create($request->all());
-        else
-            return $this->responseHandler(null, 404, "Wrong identifier");
+        if ($identifier === 'office') {
+            $office = Office::find($request->input('id'));
+            $office->fill($request->all())->save();
+        } else if ($identifier === 'department') {
+            $department = Department::find($request->input('id'));
+            $department->fill($request->all())->save();
+        } else
+            return $this->responseHandler(null, 404, 'Wrong identifier');
 
         return $this->responseHandler(null, 200, 'Update Successfully');
     }
@@ -131,20 +151,20 @@ class CompanyController extends Controller
      * 
      * @return boolean value
      */
-    public function delete($identifier = "", $id = null)
+    public function delete($identifier = '', $id = null)
     {
         if (!auth()->user()->is_admin)
             return $this->responseHandler(null, 400, 'You are not admin');
 
         $success = false;
-        if ($identifier === "office")
+        if ($identifier === 'office')
             $success = Office::destroy($id);
-        else if ($identifier === "department")
+        else if ($identifier === 'department')
             $success = Department::destroy($id);
         else
-            return $this->responseHandler(null, 404, "Wrong identifier");
+            return $this->responseHandler(null, 404, 'Wrong identifier');
 
-        if (!$success) return $this->responseHandler(null, 400, "Failed to delete " . $identifier);
+        if (!$success) return $this->responseHandler(null, 400, 'Failed to delete ' . $identifier);
 
         return $this->responseHandler(null, 200, 'Successfully delete ' . $identifier);
     }

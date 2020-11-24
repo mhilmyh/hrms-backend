@@ -135,6 +135,7 @@ class CompanyController extends Controller
                 'name' => $request->input('name'),
                 'code' => $request->input('code'),
                 'chairman_id' => $request->input('chairman_id'),
+                'office_id' => $request->input('office_id'),
             ]);
         } else
             return $this->responseHandler(null, 404, 'Wrong identifier');

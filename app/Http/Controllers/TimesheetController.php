@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Carbon;
+
 use App\Models\Activity;
 use App\Models\Timesheet;
 use Illuminate\Http\Request;
@@ -14,7 +16,7 @@ class TimesheetController extends Controller
             'activities.*.desc' => 'required|string',
             'activities.*.start_time' => 'required|date_format:H:i',
             'activities.*.stop_time' => 'required|date_format:H:i',
-            'user_id' => 'required|integer',
+            // 'user_id' => 'required|integer',
         ]
     ];
 
@@ -37,8 +39,9 @@ class TimesheetController extends Controller
      */
     public function index()
     {
-        $timesheets = Timesheet::with(['user.employee', 'activities'])->get();
-        return $this->responseHandler(['timesheets' => $timesheets]);
+        $today_timesheets = Timesheet::with(['user.employee', 'activities'])->where('created_at', '>=', Carbon::today())->get();
+        $timesheets = Timesheet::with(['user.employee'])->get();
+        return $this->responseHandler(['timesheets' => $timesheets, 'today_timesheets' => $today_timesheets]);
     }
 
     /**
@@ -51,7 +54,7 @@ class TimesheetController extends Controller
         $this->validate($request, $this->validateRule['create']);
 
         $timesheet = Timesheet::create([
-            'user_id' => $request->input('user_id')
+            'user_id' => auth()->user()->id
         ]);
 
         $activities = $request->input('activities');

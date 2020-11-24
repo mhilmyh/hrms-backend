@@ -21,6 +21,13 @@ class Timesheet extends Model
   protected $table = 'timesheets';
 
   /**
+   * Remove updated at
+   * 
+   * @var null
+   */
+  const UPDATED_AT = null;
+
+  /**
    * The attributes that are mass assignable.
    *
    * @var array

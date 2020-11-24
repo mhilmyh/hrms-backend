@@ -49,6 +49,8 @@ class Office extends Model
    * @var array
    */
   protected $casts = [
+    'opening_time' => 'date:H:i',
+    'closing_time' => 'date:H:i',
     'is_branch' => 'boolean'
   ];
 
@@ -96,8 +98,6 @@ class Office extends Model
   public function delete()
   {
     DB::beginTransaction();
-
-    $this->image()->delete();
 
     $this->address()->delete();
 

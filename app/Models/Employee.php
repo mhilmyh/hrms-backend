@@ -53,7 +53,10 @@ class Employee extends Model
    *
    * @var array
    */
-  protected $casts = [];
+  protected $casts = [
+    'rating' => 'integer',
+    'salary' => 'integer',
+  ];
 
   /**
    * The attributes excluded from the model's JSON form.

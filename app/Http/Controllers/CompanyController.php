@@ -71,7 +71,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $offices = Office::with(['head_office', 'image', 'address', 'departments'])->get();
+        $offices = Office::with(['address', 'departments'])->get();
         $departments = Department::with(['chairman.employee', 'office'])->get();
 
         return $this->responseHandler(['offices' => $offices, 'departments' => $departments]);

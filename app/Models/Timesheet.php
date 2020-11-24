@@ -52,6 +52,8 @@ class Timesheet extends Model
    * @var array
    */
   protected $casts = [
+    'start_time' => 'date:H:i',
+    'stop_time' => 'date:H:i',
     'is_approved' => 'boolean'
   ];
 

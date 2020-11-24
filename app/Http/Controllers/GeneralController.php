@@ -46,4 +46,19 @@ class GeneralController extends Controller
       'best_employee' => $best_employee
     ]);
   }
+
+  /**
+   * Reset rating controller
+   * 
+   * @return null
+   */
+  public function reset()
+  {
+    if (!auth()->user()->is_admin)
+      return $this->responseHandler(null, 400, 'You are not admin');
+
+    Employee::query()->update(['rating' => 0]);
+
+    return $this->responseHandler(null, 200, 'Rating reset successfully');
+  }
 }

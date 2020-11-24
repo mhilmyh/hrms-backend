@@ -19,7 +19,10 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'api'], function () use ($router) {
     // Dashboard
-    $router->get('/dashboard', ['uses' => 'GeneralController@dashboard']);
+    $router->group(['prefix' => 'dashboard'], function () use ($router) {
+        $router->get('/', ['uses' => 'GeneralController@dashboard']);
+        $router->delete('/rating', ['uses' => 'GeneralController@reset']);
+    });
 
     // Auth
     $router->group(['prefix' => 'auth'], function () use ($router) {
@@ -50,7 +53,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     // Timesheet
     $router->group(['prefix' => 'timesheet'], function () use ($router) {
         $router->get('/', ['uses' => 'TimesheetController@index']);
+        $router->put('/approve/{id}', ['uses' => 'TimesheetController@approve']);
         $router->post('/', ['uses' => 'TimesheetController@create']);
+        $router->delete('/clear', ['uses' => 'TimesheetController@clear']);
         $router->delete('/{id}', ['uses' => 'TimesheetController@delete']);
     });
 

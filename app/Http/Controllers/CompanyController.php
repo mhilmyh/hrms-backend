@@ -114,27 +114,27 @@ class CompanyController extends Controller
         $this->validate($request, $this->validateRule[$identifier]['create']);
 
         if ($identifier === 'office') {
-            Office::create([
-                'name' => $request->input('name'),
-                'opening_time' => $request->input('opening_time'),
-                'closing_time' => $request->input('closing_time'),
-                'building' => $request->input('building'),
-                'is_branch' => $request->input('is_branch'),
-                'head_office_id' => $request->input('head_office_id'),
-            ]);
-            Address::create([
+            $address = Address::create([
                 'country' => $request->input('country'),
                 'province' => $request->input('province'),
                 'city' => $request->input('city'),
                 'postal_code' => $request->input('postal_code'),
                 'street' => $request->input('street'),
             ]);
+
+            Office::create([
+                'name' => $request->input('name'),
+                'opening_time' => $request->input('opening_time'),
+                'closing_time' => $request->input('closing_time'),
+                'building' => $request->input('building'),
+                'is_branch' => $request->input('is_branch'),
+                'address_id' => $address->id,
+            ]);
         } else if ($identifier === 'department') {
             Department::create([
                 'name' => $request->input('name'),
                 'code' => $request->input('code'),
                 'chairman_id' => $request->input('chairman_id'),
-                'office_id' => $request->input('office_id'),
             ]);
         } else
             return $this->responseHandler(null, 404, 'Wrong identifier');
@@ -156,7 +156,23 @@ class CompanyController extends Controller
 
         if ($identifier === 'office') {
             $office = Office::find($request->input('id'));
-            $office->fill($request->all())->save();
+            $address = Address::find($office->address_id);
+
+            $office->fill([
+                'name' => $request->input('name') === null ? $office->name : $request->input('name'),
+                'opening_time' => $request->input('opening_time') === null ? $office->opening_time : $request->input('opening_time'),
+                'closing_time' => $request->input('closing_time') === null ? $office->closing_time : $request->input('closing_time'),
+                'building' => $request->input('building') === null ? $office->building : $request->input('building'),
+                'is_branch' => $request->input('is_branch') === null ? $office->is_branch : $request->input('is_branch'),
+            ])->save();
+
+            $address->fill([
+                'country' => $request->input('country') === null ? $address->country : $request->input('country'),
+                'province' => $request->input('province') === null ? $address->province : $request->input('province'),
+                'city' => $request->input('city') === null ? $address->city : $request->input('city'),
+                'postal_code' => $request->input('postal_code') === null ? $address->postal_code : $request->input('postal_code'),
+                'street' => $request->input('street') === null ? $address->street : $request->input('street'),
+            ])->save();
         } else if ($identifier === 'department') {
             $department = Department::find($request->input('id'));
             $department->fill($request->all())->save();

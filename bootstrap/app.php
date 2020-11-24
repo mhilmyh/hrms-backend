@@ -27,7 +27,8 @@ $app->withFacades();
 
 $app->withEloquent();
 
-$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+// $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,7 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('cors');
 
 /*
 |--------------------------------------------------------------------------
@@ -75,7 +77,7 @@ $app->configure('app');
 */
 
 $app->middleware([
-    App\Http\Middleware\Cors::class,
+    Fruitcake\Cors\HandleCors::class,
     App\Http\Middleware\Json::class
 ]);
 

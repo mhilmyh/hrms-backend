@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\Department;
+use App\Models\Notification;
 use App\Models\Office;
 use Illuminate\Http\Request;
 
@@ -40,8 +41,8 @@ class CompanyController extends Controller
             'create' => [
                 'name' => 'required|string',
                 'code' => 'required|string',
-                'chairman_id' => 'nullable|integer',
-                'office_id' => 'nullable|integer',
+                'chairman_id' => 'required|integer',
+                'office_id' => 'required|integer',
             ],
             'update' => [
                 'name' => 'nullable|string',
@@ -137,6 +138,10 @@ class CompanyController extends Controller
                 'chairman_id' => $request->input('chairman_id'),
                 'office_id' => $request->input('office_id'),
             ]);
+            Notification::create([
+                'user_id' => $request->input('chairman_id'),
+                'message' => 'now you are the chairman of the department ' . $request->input('name'),
+            ]);
         } else
             return $this->responseHandler(null, 404, 'Wrong identifier');
 
@@ -177,6 +182,12 @@ class CompanyController extends Controller
         } else if ($identifier === 'department') {
             $department = Department::find($request->input('id'));
             $department->fill($request->all())->save();
+            if ($department->chairman_id) {
+                Notification::create([
+                    'user_id' => $department->chairman_id,
+                    'message' => 'your department data has changed',
+                ]);
+            }
         } else
             return $this->responseHandler(null, 404, 'Wrong identifier');
 

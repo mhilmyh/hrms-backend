@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 use App\Models\Address;
 use App\Models\Employee;
+use App\Models\Notification;
 use App\Models\User;
 
 class UserController extends Controller
@@ -92,7 +93,38 @@ class UserController extends Controller
         $employee->birthday = $request->input("birthday") === null ? $employee->birthday : $request->input("birthday");
         $employee->salary = $request->input("salary") === null ? $employee->salary : $request->input("salary");
         $employee->job_position = $request->input("job_position") === null ? $employee->job_position : $request->input("job_position");
-        $employee->rating = $request->input("rating") === null ? $employee->rating : $request->input("rating");
+
+        if ($request->input("rating")) {
+            $diff = $request->input("rating") - $employee->rating;
+            $message_status = '';
+
+            if ($diff !== 0) {
+                if ($diff > 0) $message_status = 'increase';
+                else $message_status = 'decrease';
+
+                Notification::create([
+                    'user_id' => $user->id,
+                    'message' => 'your rating is ' . $message_status,
+                ]);
+            }
+            $employee->rating = $request->input("rating");
+        }
+
+        if ($request->input('supervisor_id')) {
+            $employee->supervisor_id = $request->input('supervisor_id');
+            Notification::create([
+                'user_id' => $request->input('supervisor_id'),
+                'message' => 'now you are the supervisor of the user ' . $user->email,
+            ]);
+        }
+
+        if ($request->input('department_id')) {
+            $employee->department_id = $request->input('department_id');
+            Notification::create([
+                'user_id' => $user->id,
+                'message' => 'you have moved to another department',
+            ]);
+        }
 
         // update address
         $address->country = $request->input("country") === null ? $address->country : $request->input("country");

@@ -11,9 +11,9 @@ class ImageController extends Controller
 {
     private $validateRule = [
         'create' => [
-            'id' => 'required|integer',
-            'identifier' => 'required|string',
-            'image' => 'required|file|max:10240'
+            'id' => 'nullable|integer',
+            'identifier' => 'nullable|string',
+            'image' => 'required|file|max:3072'
         ],
         'delete' => [
             'id' => 'required|integer',
@@ -32,7 +32,33 @@ class ImageController extends Controller
     }
 
     /**
-     * Create image controller
+     * Upload profile image
+     * 
+     * @return null
+     */
+    public function profile(Request $request)
+    {
+        $this->validate($request, $this->validateRule['create']);
+
+        $employee = Employee::with('image')->where('user_id', auth()->user()->id)->first();
+
+        if ($employee->image)
+            $this->imageDeleteHelper($employee->image->url);
+
+        $image_url = $this->imageUploadHelper($request);
+        $image = Image::create([
+            'alt' => 'profile',
+            'url' => $image_url
+        ]);
+
+        $employee->image_id = $image->id;
+        $employee->save();
+
+        return $this->responseHandler(null, 201, "Image Uploaded Successfully.");
+    }
+
+    /**
+     * Create image controller (Deprecated)(Deprecated)
      *
      * @return boolean value
      */
@@ -70,7 +96,7 @@ class ImageController extends Controller
     }
 
     /**
-     * Delete image controller
+     * Delete image controller (Deprecated)
      *
      * @return boolean value
      */

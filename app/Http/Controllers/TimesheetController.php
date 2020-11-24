@@ -129,6 +129,6 @@ class TimesheetController extends Controller
             $timesheet->delete();
         }
 
-        return $this->responseHandler(null, 200, 'Timesheet deleted successfully');
+        return $this->responseHandler(null, 200, 'Timesheet cleared');
     }
 }

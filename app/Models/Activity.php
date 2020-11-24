@@ -9,7 +9,7 @@ use App\Models\Timesheet;
 
 class Activity extends Model
 {
-    use HasFactory;
+  use HasFactory;
   /**
    * The table associated with the model.
    *
@@ -42,7 +42,10 @@ class Activity extends Model
    *
    * @var array
    */
-  protected $casts = [];
+  protected $casts = [
+    'start_time' => 'date:H:i',
+    'stop_time' => 'date:H:i',
+  ];
 
   /**
    * The attributes excluded from the model's JSON form.

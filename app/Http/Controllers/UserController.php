@@ -95,7 +95,11 @@ class UserController extends Controller
         $employee->job_position = $request->input("job_position") === null ? $employee->job_position : $request->input("job_position");
 
         $diff = 0;
-        if (empty($request->input("rating"))) {
+        if (
+            intval($request->input("rating")) >= 0 &&
+            intval($employee->rating) >= 0
+        ) {
+
             $diff = intval($request->input("rating")) - intval($employee->rating);
             $message_status = '';
 

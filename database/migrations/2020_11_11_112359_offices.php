@@ -22,7 +22,7 @@ class Offices extends Migration
             $table->time('closing_time');
             $table->string('building')->nullable();
             $table->boolean('is_branch')->default(false);
-            $table->foreignId('address_id');
+            $table->foreignId('address_id')->onDelete('cascade');
             $table->timestamps();
         });
     }

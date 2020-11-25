@@ -100,10 +100,7 @@ class Office extends Model
     DB::beginTransaction();
 
     $this->address()->delete();
-
-    $this->departments()->each(function ($activity) {
-      $activity->delete();
-    });
+    $this->departments()->delete();
 
     $result = parent::delete();
 

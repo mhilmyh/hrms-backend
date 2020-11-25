@@ -21,7 +21,7 @@ class Users extends Migration
             $table->string('password', 60);
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_login')->default(false);
-            $table->foreignId('employee_id')->nullable();
+            $table->foreignId('employee_id')->nullable()->onDelete('cascade');
             $table->timestamps();
         });
     }

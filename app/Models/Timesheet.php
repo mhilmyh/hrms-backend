@@ -100,9 +100,7 @@ class Timesheet extends Model
   {
     DB::beginTransaction();
 
-    $this->activities()->each(function ($activity) {
-      $activity->delete();
-    });
+    $this->activities()->delete();
 
     $result = parent::delete();
 

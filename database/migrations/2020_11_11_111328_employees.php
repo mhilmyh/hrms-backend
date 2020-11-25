@@ -27,8 +27,8 @@ class Employees extends Migration
             $table->string('job_position')->nullable();
             $table->float('rating')->default(0.0);
             $table->foreignId('user_id');
-            $table->foreignId('image_id')->nullable();
-            $table->foreignId('address_id')->nullable();
+            $table->foreignId('image_id')->nullable()->onDelete('cascade');
+            $table->foreignId('address_id')->nullable()->onDelete('cascade');
             $table->foreignId('supervisor_id')->nullable();
             $table->foreignId('department_id')->nullable();
             $table->timestamps();

@@ -133,10 +133,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         DB::beginTransaction();
 
         $this->employee()->delete();
-
-        $this->notifications()->each(function ($notification) {
-            $notification->delete();
-        });
+        $this->notifications()->delete();
 
         $result = parent::delete();
 

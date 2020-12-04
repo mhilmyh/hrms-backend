@@ -82,10 +82,12 @@ class Controller extends BaseController
      */
     protected function buildFailedValidationResponse(Request $request, array $errors)
     {
-        return [
-            "code" => 400,
-            "message" => "Periksa kembali inputan anda",
-            "errors" => $errors
-        ];
+        $array = [];
+        foreach ($errors as $key => $value) {
+            array_push($array, $value[0]);
+        }
+        return response()->json([
+            'message' => implode(" ", $array),
+        ], 400);
     }
 }

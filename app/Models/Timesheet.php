@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\User;
-use App\Models\Activities;
+use App\Models\Activity;
 
 class Timesheet extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
   /**
    * The table associated with the model.
@@ -18,6 +19,13 @@ class Timesheet extends Model
    * @var string
    */
   protected $table = 'timesheets';
+
+  /**
+   * Remove updated at
+   * 
+   * @var null
+   */
+  const UPDATED_AT = null;
 
   /**
    * The attributes that are mass assignable.
@@ -64,7 +72,7 @@ class Timesheet extends Model
   }
 
   /**
-   * Sender detail from relation
+   * User owner of timesheet
    *
    * @return object
    */
@@ -80,6 +88,24 @@ class Timesheet extends Model
    */
   public function activities()
   {
-    return $this->hasMany(Activities::class, 'timesheet_id', 'id');
+    return $this->hasMany(Activity::class, 'timesheet_id', 'id');
+  }
+
+  /**
+   * Delete model with relation
+   * 
+   * @return bool
+   */
+  public function delete()
+  {
+    DB::beginTransaction();
+
+    $this->activities()->delete();
+
+    $result = parent::delete();
+
+    DB::commit();
+
+    return $result;
   }
 }

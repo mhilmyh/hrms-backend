@@ -9,7 +9,7 @@ use App\Models\User;
 
 class Notification extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
   /**
    * The table associated with the model.
@@ -25,7 +25,6 @@ class Notification extends Model
    */
   protected $fillable = [
     'message',
-    'is_read',
     'user_id',
   ];
 
@@ -36,7 +35,6 @@ class Notification extends Model
    */
   protected $attributes = [
     // attributes with default value
-    'is_read' => false,
   ];
 
   /**
@@ -44,9 +42,7 @@ class Notification extends Model
    *
    * @var array
    */
-  protected $casts = [
-    'is_read' => 'boolean',
-  ];
+  protected $casts = [];
 
   /**
    * The attributes excluded from the model's JSON form.

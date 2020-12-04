@@ -11,8 +11,14 @@ class ImageController extends Controller
 {
     private $validateRule = [
         'create' => [
-            'image' => 'required|file|max:10240'
-        ]
+            'id' => 'nullable|integer',
+            'identifier' => 'nullable|string',
+            'image' => 'required|file|max:3072'
+        ],
+        'delete' => [
+            'id' => 'required|integer',
+            'identifier' => 'required|string',
+        ],
     ];
 
     /**
@@ -22,13 +28,37 @@ class ImageController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => [
-            'index'
-        ]]);
+        $this->middleware('auth');
     }
 
     /**
-     * Create image controller
+     * Upload profile image
+     *
+     * @return null
+     */
+    public function profile(Request $request)
+    {
+        $this->validate($request, $this->validateRule['create']);
+
+        $employee = Employee::with('image')->where('user_id', auth()->user()->id)->first();
+
+        if ($employee->image)
+            $this->imageDeleteHelper($employee->image->url);
+
+        $image_url = $this->imageUploadHelper($request);
+        $image = Image::create([
+            'alt' => 'profile',
+            'url' => $image_url
+        ]);
+
+        $employee->image_id = $image->id;
+        $employee->save();
+
+        return $this->responseHandler(null, 201, "Image Uploaded Successfully.");
+    }
+
+    /**
+     * Create image controller (Deprecated)(Deprecated)
      *
      * @return boolean value
      */
@@ -36,43 +66,73 @@ class ImageController extends Controller
     {
         $this->validate($request, $this->validateRule['create']);
 
-        // TODO: check param to determine model (employee or office)
-        // id is for employeeId || officeId
-        $id = $request->query('id');
-        $model = $request->query('type') == "employee" ? Employee::find($id) : Office::find($id);
-        $image = $this->imageUploadHelper($request);
-        // TODO: save image according to model (employee or office)
-        $tmp = parse_url($image, PHP_URL_PATH);
-        $segments = explode("/", trim($tmp, "/"));
-        $src = end($segments);
-        $img = Image::create([
-            'alt' => $src,
-            'url' => $image,
+        $id = $request->input('id');
+        $identifier = $request->input('identifier');
+
+        $model = null;
+        switch ($identifier) {
+            case "employee":
+                $model = Employee::find($id);
+                break;
+            case "office":
+                $model = Office::find($id);
+                break;
+            default:
+                $this->responseHandler(null, 400, "Identifier not found");
+                break;
+        }
+
+        $image_url = $this->imageUploadHelper($request);
+
+        $image = Image::create([
+            'alt' => $identifier,
+            'url' => $image_url,
         ]);
 
-        $model->image_id = $img->id;
+        $model->image_id = $image->id;
         $model->save();
-        return $this->responseHandler(['value' => true], 201, "Image Uploaded Successfully.");
+
+        return $this->responseHandler(null, 201, "Image Uploaded Successfully.");
     }
 
     /**
-     * Delete image controller
+     * Delete image controller (Deprecated)
      *
      * @return boolean value
      */
     public function delete(Request $request)
     {
-        // TODO: check param to determine model (employee or office)
-        $id = $request->query('id');
-        $model = $request->query('type') == "employee" ? Employee::find($id) : Office::find($id);
-        // TODO: delete image
-        $image = Image::find($model->image_id);
-        if (!$this->imageDeleteHelper($image->url)){
-            return $this->responseHandler(['value' => false], 404, "Failed when deleting an image");
+        $id = $request->input('id');
+        $identifier = $request->input('identifier');
+
+        $model = null;
+        switch ($identifier) {
+            case "employee":
+                $model = Employee::find($id);
+                break;
+            case "office":
+                $model = Office::find($id);
+                break;
+            default:
+                $this->responseHandler(null, 400, "Identifier not found");
+                break;
         }
+
+        $image = Image::find($model->image_id);
+
+        if (!$image) {
+            return $this->responseHandler(null, 404, 'Image not found');
+        }
+
+        if (!$this->imageDeleteHelper($image->url)) {
+            return $this->responseHandler(null, 404, "Failed when deleting an image");
+        }
+
         $image->delete();
-        // TODO: remove relation from model (employee or office)
+
         $model->image_id  = null;
-        $this->responseHandler(['value' => true], 201, "Delete Image was successful");
+        $model->save();
+
+        $this->responseHandler(null, 200, "Delete Image was successful");
     }
 }

@@ -18,39 +18,52 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
+    // Dashboard
+    $router->group(['prefix' => 'dashboard'], function () use ($router) {
+        $router->get('/', ['uses' => 'GeneralController@dashboard']);
+        $router->delete('/rating', ['uses' => 'GeneralController@reset']);
+    });
+
     // Auth
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('/login', ['uses' => 'AuthController@login']);
         $router->post('/logout', ['uses' => 'AuthController@logout']);
-        $router->get('/user', ['uses' => 'AuthController@user']);
         $router->post('/register', ['uses' => 'AuthController@register']);
-    });
-
-    // User
-    $router->group(['prefix' => 'user'], function () use ($router) {
-        $router->get('/', ['uses' => 'UserController@index']);
-        $router->put('/edit', ['uses' => 'UserController@update']);
-        $router->delete('/delete', ['uses' => 'UserController@delete']);
-    });
-
-    // Timesheet
-    $router->group(['prefix' => 'timesheet'], function () use ($router) {
-        $router->get('/', ['uses' => 'TimesheetController@index']);
-        $router->post('/', ['uses' => 'TimesheetController@create']);
-        $router->delete('/', ['uses' => 'TimesheetController@delete']);
+        $router->get('/user', ['uses' => 'AuthController@user']);
+        $router->get('/notification', ['uses' => 'AuthController@notification']);
+        $router->delete('/notification/{id}', ['uses' => 'AuthController@clear']);
     });
 
     // Company
     $router->group(['prefix' => 'company'], function () use ($router) {
         $router->get('/', ['uses' => 'CompanyController@index']);
-        $router->post('/', ['uses' => 'CompanyController@create']);
-        $router->put('/', ['uses' => 'CompanyController@update']);
-        $router->delete('/', ['uses' => 'CompanyController@delete']);
+        $router->get('/offices', ['uses' => 'CompanyController@offices']);
+        $router->get('/departments', ['uses' => 'CompanyController@departments']);
+        $router->post('/{identifier}', ['uses' => 'CompanyController@create']);
+        $router->put('/{identifier}', ['uses' => 'CompanyController@update']);
+        $router->delete('/{identifier}/{id}', ['uses' => 'CompanyController@delete']);
     });
 
-    // Images
+    // Image
     $router->group(['prefix' => 'image'], function () use ($router) {
-        $router->post('/create', ['uses' => 'ImageController@create']);
-        $router->delete('/delete', ['uses' => 'ImageController@delete']);
+        $router->post('/profile', ['uses' => 'ImageController@profile']);
+        // $router->post('/', ['uses' => 'ImageController@create']);
+        // $router->delete('/', ['uses' => 'ImageController@delete']);
+    });
+
+    // Timesheet
+    $router->group(['prefix' => 'timesheet'], function () use ($router) {
+        $router->get('/', ['uses' => 'TimesheetController@index']);
+        $router->put('/approve/{id}', ['uses' => 'TimesheetController@approve']);
+        $router->post('/', ['uses' => 'TimesheetController@create']);
+        $router->delete('/clear', ['uses' => 'TimesheetController@clear']);
+        $router->delete('/{id}', ['uses' => 'TimesheetController@delete']);
+    });
+
+    // User
+    $router->group(['prefix' => 'user'], function () use ($router) {
+        $router->get('/', ['uses' => 'UserController@index']);
+        $router->put('/{id}', ['uses' => 'UserController@update']);
+        $router->delete('/{id}', ['uses' => 'UserController@delete']);
     });
 });

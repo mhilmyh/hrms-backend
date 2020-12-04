@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Department;
 use App\Models\Address;
@@ -11,7 +12,7 @@ use App\Models\Image;
 
 class Office extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
   /**
    * The table associated with the model.
@@ -30,10 +31,8 @@ class Office extends Model
     'name',
     'opening_time',
     'closing_time',
-    'build',
+    'building',
     'is_branch',
-    'head_office_id',
-    'image_id',
     'address_id',
   ];
 
@@ -50,6 +49,8 @@ class Office extends Model
    * @var array
    */
   protected $casts = [
+    'opening_time' => 'date:H:i',
+    'closing_time' => 'date:H:i',
     'is_branch' => 'boolean'
   ];
 
@@ -70,26 +71,6 @@ class Office extends Model
   }
 
   /**
-   * The chairman of department
-   *
-   * @return object
-   */
-  public function head_office()
-  {
-    return $this->hasOne(Office::class, 'id', 'head_office_id');
-  }
-
-  /**
-   * Image for office picture
-   *
-   * @return object
-   */
-  public function image()
-  {
-    return $this->hasOne(Image::class, 'id', 'image_id');
-  }
-
-  /**
    * Address of office
    *
    * @return object
@@ -102,10 +83,29 @@ class Office extends Model
   /**
    * Departments of office
    *
-   * @return array
+   * @return object
    */
   public function departments()
   {
     return $this->hasMany(Department::class, 'id', 'address_id');
+  }
+
+  /**
+   * Delete model with relation
+   * 
+   * @return bool
+   */
+  public function delete()
+  {
+    DB::beginTransaction();
+
+    $this->address()->delete();
+    $this->departments()->delete();
+
+    $result = parent::delete();
+
+    DB::commit();
+
+    return $result;
   }
 }

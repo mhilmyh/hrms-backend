@@ -19,7 +19,7 @@ class Timesheets extends Migration
             $table->id();
             $table->boolean('is_approved')->default(false);
             $table->foreignId('user_id');
-            $table->timestamps();
+            $table->timestamp('created_at');
         });
     }
 

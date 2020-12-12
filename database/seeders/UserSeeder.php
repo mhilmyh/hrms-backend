@@ -16,8 +16,5 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::factory()->times(5)->create();
-        $edtEmp = User::find(1);
-        $edtEmp->employee_id = 1;
-        $edtEmp->save();
     }
 }

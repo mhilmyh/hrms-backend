@@ -45,6 +45,7 @@ class EmployeeFactory extends Factory
         $allUsers = User::all()->pluck("id")->toArray();
         $user = $this->faker->randomElement($allUsers);
         $otherUser = $this->faker->randomElement($this->delVal($user, $allUsers));
+        $image = Image::all()->pluck("id")->random();
 
         return [
             'first_name' => $this->faker->firstName($gender),
@@ -56,10 +57,10 @@ class EmployeeFactory extends Factory
             'salary' => mt_rand(1000000, 20000000),
             'job_position' => $this->faker->jobTitle,
             'rating' => $this->rand_float(),
-            'user_id' => User::factory(),
-            'image_id' => Image::factory(),
-            'address_id' => Address::factory(),
-            'department_id' => Department::factory(),
+            'user_id' => $user,
+            'image_id' => $image,
+            'address_id' => Address::all()->pluck("id")->random(),
+            'department_id' => Department::all()->pluck("id")->random(),
             'supervisor_id' => $otherUser
         ];
     }

@@ -39,6 +39,32 @@ class UserController extends Controller
             'department_id' => 'nullable|integer',
         ],
     ];
+
+    // Helper Function
+    public function updateEmployee(Request $request, Employee $employee) {
+        // update employee
+        $employee->first_name = $request->input("first_name") === null ? $employee->first_name : $request->input("first_name");
+        $employee->mid_name = $request->input("mid_name") === null ? $employee->mid_name : $request->input("mid_name");
+        $employee->last_name = $request->input("last_name") === null ? $employee->last_name : $request->input("last_name");
+        $employee->phone = $request->input("phone") === null ? $employee->phone : $request->input("phone");
+        $employee->gender = $request->input("gender") === null ? $employee->gender : $request->input("gender");
+        $employee->birthday = $request->input("birthday") === null ? $employee->birthday : $request->input("birthday");
+        $employee->salary = $request->input("salary") === null ? $employee->salary : $request->input("salary");
+        $employee->job_position = $request->input("job_position") === null ? $employee->job_position : $request->input("job_position");
+
+        return $employee;
+    }
+
+    public function updateAddress(Request $request, Address $address)
+    {
+        $address->country = $request->input("country") === null ? $address->country : $request->input("country");
+        $address->province = $request->input("province") === null ? $address->province : $request->input("province");
+        $address->city = $request->input("city") === null ? $address->city : $request->input("city");
+        $address->postal_code = $request->input("postal_code") === null ? $address->postal_code : $request->input("postal_code");
+        $address->street = $request->input("street") === null ? $address->street : $request->input("street");
+        return $address;
+    }
+
     /**
      * Create a new controller instance.
      *
@@ -64,7 +90,7 @@ class UserController extends Controller
             'employee.image'
         ])->get();
 
-        return $this->responseHandler(['users' => $users]);
+        return $this->responseHandler(['users' => $users], 200, 'Successfully retrieved users.');
     }
 
     /**
@@ -74,10 +100,9 @@ class UserController extends Controller
      */
     public function update(Request $request, $id = null)
     {
-        $id = intval($request->query('id'));
-
         // find user, employee and address
         $user = User::find($id);
+        error_log($id);
         $employee = Employee::find($user->employee_id);
         $address = Address::find($employee->address_id);
 
@@ -86,14 +111,7 @@ class UserController extends Controller
         $user->password = $request->input("password") === null ? $user->password : Hash::make($request->input('password'));
 
         // update employee
-        $employee->first_name = $request->input("first_name") === null ? $employee->first_name : $request->input("first_name");
-        $employee->mid_name = $request->input("mid_name") === null ? $employee->mid_name : $request->input("mid_name");
-        $employee->last_name = $request->input("last_name") === null ? $employee->last_name : $request->input("last_name");
-        $employee->phone = $request->input("phone") === null ? $employee->phone : $request->input("phone");
-        $employee->gender = $request->input("gender") === null ? $employee->gender : $request->input("gender");
-        $employee->birthday = $request->input("birthday") === null ? $employee->birthday : $request->input("birthday");
-        $employee->salary = $request->input("salary") === null ? $employee->salary : $request->input("salary");
-        $employee->job_position = $request->input("job_position") === null ? $employee->job_position : $request->input("job_position");
+        $employee = $this->updateEmployee($request, $employee);
 
         $diff = 0;
         if (
@@ -105,8 +123,12 @@ class UserController extends Controller
             $message_status = '';
 
             if ($diff !== 0) {
-                if ($diff > 0) $message_status = 'increase';
-                else $message_status = 'decrease';
+                if ($diff > 0) {
+                    $message_status = 'increase';
+                }
+                else {
+                    $message_status = 'decrease';
+                }
 
                 Notification::create([
                     'user_id' => $user->id,
@@ -133,18 +155,14 @@ class UserController extends Controller
         }
 
         // update address
-        $address->country = $request->input("country") === null ? $address->country : $request->input("country");
-        $address->province = $request->input("province") === null ? $address->province : $request->input("province");
-        $address->city = $request->input("city") === null ? $address->city : $request->input("city");
-        $address->postal_code = $request->input("postal_code") === null ? $address->postal_code : $request->input("postal_code");
-        $address->street = $request->input("street") === null ? $address->street : $request->input("street");
+        $address = $this->updateAddress($request, $address);
 
         // save
         $address->save();
         $employee->save();
         $user->save();
 
-        return $this->responseHandler(null, 200, "Successfully update user");
+        return $this->responseHandler(null, 200, "User updated successfully");
     }
 
     /**
@@ -156,9 +174,9 @@ class UserController extends Controller
     {
         $success = User::destroy($id);
 
-        if (!$success)
+        if (!$success) {
             return $this->responseHandler(null, 400, 'Failed to delete user');
-
-        return $this->responseHandler(null, 200, "Successfully delete user");
+        }
+        return $this->responseHandler(null, 200, "User deleted successfully");
     }
 }

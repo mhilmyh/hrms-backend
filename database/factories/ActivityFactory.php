@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Activity;
+use App\Models\Timesheet;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -36,7 +37,7 @@ class ActivityFactory extends Factory
             'desc' => $this->faker->sentence,
             'start_time' => $start_time->toDateTimeString(),
             'stop_time' => $start_time->addHours($this->faker->numberBetween(1, 8)),
-            'timesheet_id' => $this->random20()
+            'timesheet_id' => Timesheet::all()->pluck('id')->random()
         ];
     }
 }

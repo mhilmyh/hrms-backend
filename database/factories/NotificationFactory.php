@@ -22,9 +22,10 @@ class NotificationFactory extends Factory
      */
     public function definition()
     {
+        $userIds = User::all()->pluck("id")->toArray();
         return [
             'message' => $this->faker->sentence,
-            'user_id' => User::factory()
+            'user_id' => $this->faker->unique()->randomElement($userIds)
         ];
     }
 }

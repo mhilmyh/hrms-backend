@@ -3,6 +3,8 @@
 use App\Models\Address;
 use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserTest extends TestCase
@@ -14,8 +16,7 @@ class UserTest extends TestCase
      */
     public function testShouldReturnAllUsers()
     {
-        $id = 2;
-        $user = User::find($id);
+        $user = User::find(1);
         $token = JWTAuth::fromUser($user);
         $this->get('/api/user?token='.$token, [])->seeStatusCode(200)
             ->seeJsonStructure([
@@ -73,6 +74,7 @@ class UserTest extends TestCase
         $address = Address::factory()->create();
         $employee = Employee::factory()->create();
 
+        $userId = $user->id;
         $user->employee_id = $employee->id;
         $user->is_login = true;
         $employee->user_id = $user->id;
@@ -86,7 +88,7 @@ class UserTest extends TestCase
 
         $params = [
             'email' => 'abab@ipbu.id',
-            'password' => '1234567890',
+            'password' => Hash::make('1234567890'),
             'first_name' => 'Petelgeuse',
             'mid_name' => 'Romanne',
             'last_name' => 'Conti',
@@ -104,6 +106,10 @@ class UserTest extends TestCase
             ->seeStatusCode(200)
             ->seeJsonEquals(['message' => 'User updated successfully']);
 
+        $user = User::find($userId);
+        $user->delete();
+        $employee->delete();
+        $address->delete();
     }
 
     public function testShouldDeleteAUser() {

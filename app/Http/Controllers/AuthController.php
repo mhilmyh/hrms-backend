@@ -74,7 +74,7 @@ class AuthController extends Controller
       return $this->responseHandler(null, 404, 'User not found');
 
     if (!Hash::check($request->input('password'), $user->password))
-      return $this->responseHandler(null, 400, 'Password not match');
+      return $this->responseHandler(null, 400, 'Password does not match');
 
     $user->is_login = true;
     $user->save();

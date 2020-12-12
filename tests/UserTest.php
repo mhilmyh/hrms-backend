@@ -64,7 +64,7 @@ class UserTest extends TestCase
             "message"]);
     }
 
-    public function shouldReturnUnauthorized() {
+    public function testShouldReturnUnauthorized() {
         $this->get('/api/user', [])->seeStatusCode(401)
             ->seeJsonEquals(['message' => 'Unauthorized']);
     }

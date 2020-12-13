@@ -74,18 +74,18 @@ class AuthController extends Controller
       return $this->responseHandler(null, 404, 'User not found');
 
     if (!Hash::check($request->input('password'), $user->password))
-      return $this->responseHandler(null, 400, 'Password not match');
+      return $this->responseHandler(null, 400, 'Password does not match');
 
     $user->is_login = true;
     $user->save();
 
     $token = JWTAuth::fromUser($user);
-    return $this->responseHandler(['token' => $token]);
+    return $this->responseHandler(['token' => $token, 'user' => $user], 200, 'Successfully logged in.');
   }
 
   /**
    * Logout controller
-   * 
+   *
    * @return null
    */
   public function logout()
@@ -122,7 +122,7 @@ class AuthController extends Controller
 
   /**
    * Register controller
-   * 
+   *
    * @return null
    */
   public function register(Request $request)
@@ -157,12 +157,12 @@ class AuthController extends Controller
     $user->employee_id = $employee->id;
     $user->save();
 
-    return $this->responseHandler(null, 201, 'Successfully register user');
+    return $this->responseHandler(['user' => $user], 201, 'Successfully register user');
   }
 
   /**
    * Clear notification controller
-   * 
+   *
    * @return null
    */
   public function clear($id = null)

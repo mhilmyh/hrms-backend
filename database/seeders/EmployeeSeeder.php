@@ -18,8 +18,5 @@ class EmployeeSeeder extends Seeder
         Employee::factory()
             ->times(5)
             ->create();
-        $edtEmp = Employee::find(1);
-        $edtEmp->user_id = 1;
-        $edtEmp->save();
     }
 }

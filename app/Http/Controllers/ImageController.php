@@ -33,7 +33,7 @@ class ImageController extends Controller
 
     /**
      * Upload profile image
-     * 
+     *
      * @return null
      */
     public function profile(Request $request)
@@ -42,9 +42,9 @@ class ImageController extends Controller
 
         $employee = Employee::with('image')->where('user_id', auth()->user()->id)->first();
 
-        if ($employee->image)
+        if ($employee->image){
             $this->imageDeleteHelper($employee->image->url);
-
+        }
         $image_url = $this->imageUploadHelper($request);
         $image = Image::create([
             'alt' => 'profile',

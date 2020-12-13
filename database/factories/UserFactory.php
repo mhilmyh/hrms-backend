@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
@@ -26,7 +27,7 @@ class UserFactory extends Factory
     {
         return [
             'email' => $this->faker->unique()->safeEmail,
-            'password' => Str::random(15),
+            'password' => Hash::make('1234567890')
         ];
     }
 }

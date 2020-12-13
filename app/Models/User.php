@@ -125,7 +125,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Delete model with relation
-     * 
+     *
      * @return bool
      */
     public function delete()

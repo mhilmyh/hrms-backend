@@ -153,10 +153,12 @@ class UserController extends Controller
      */
     public function delete($id = null)
     {
-        $success = User::destroy($id);
+        $user = User::find($id);
 
-        if (!$success)
-            return $this->responseHandler(null, 400, 'Failed to delete user');
+        if (!$user)
+            return $this->responseHandler(null, 404, 'User not found');
+
+        $user->delete();
 
         return $this->responseHandler(null, 200, "Successfully delete user");
     }

@@ -4,22 +4,13 @@ use App\Models\Activity;
 use App\Models\Timesheet;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
-use Laravel\Lumen\Testing\WithoutMiddleware;
 
 class TimesheetTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
     public function testIndex()
     {
-        $this->withoutMiddleware();
-        $response = $this->get('/api/timesheet', []);
-        $response->seeStatusCode(200)
+        $this->get('/api/timesheet')
+            ->seeStatusCode(200)
             ->seeJsonStructure([
                 "timesheets" => ['*' => [
                     "id",
@@ -106,7 +97,7 @@ class TimesheetTest extends TestCase
     }
 
     public function testShouldCreateTimesheetSuccess() {
-        $params = [
+        $data = [
             'activities' => [
                 [
                     'desc' => 'Tes1',
@@ -120,18 +111,17 @@ class TimesheetTest extends TestCase
                 ]
             ]
         ];
-        $user = User::find(1);
-        $user->is_login = true;
-        $user->save();
+        $user = User::latest()->first();
         $token = JWTAuth::fromUser($user);
-        $this->post('/api/timesheet?token='.$token, $params, [])
-            ->seeStatusCode(201);
-        $user->is_login = false;
-        $user->save();
+        $this->post('/api/timesheet?token='.$token, $data)
+            ->seeStatusCode(201)
+            ->seeJsonEquals([
+                'message' => 'Successfully create timesheet'
+            ]);
     }
 
     public function testShouldCreateTimesheetFailed() {
-        $params = [
+        $data = [
             'activities' => [
                 [
                     'desc' => 'Tes1',
@@ -145,83 +135,83 @@ class TimesheetTest extends TestCase
                 ]
             ]
         ];
-        $user = User::find(1);
-        $user->is_login = false;
-        $user->save();
-        $this->post('/api/timesheet', $params, [])
+        $this->post('/api/timesheet', $data)
             ->seeStatusCode(401);
     }
 
-    // public function testShouldApproveSuccess() {
-    //     $user = User::find(1);
-    //     $user->is_login = true;
-    //     $user->is_admin = true;
-    //     $user->save();
-    //     $token = JWTAuth::fromUser($user);
-    //     $this->put('/api/timesheet/approve/6?token='.$token, [])
-    //         ->seeStatusCode(200);
-    //     $user->is_login = false;
-    //     $user->save();
-    // }
-
-    public function testShouldApproveFailed() {
-        $user = User::find(2);
-        $user->is_login = true;
-        $user->is_admin = false;
-        $user->save();
-        $token = JWTAuth::fromUser($user);
-        $this->put('/api/timesheet/approve/6?token='.$token, [])
-            ->seeStatusCode(400);
-        $user->is_login = false;
-        $user->save();
-    }
-    
-    public function testShouldDeleteSuccess() {
-        $user = User::find(1);
-        $user->is_login = true;
+    public function testShouldApproveSuccess() {
+        $user = User::latest()->first();
+        $timesheet = Timesheet::latest()->first();
         $user->is_admin = true;
         $user->save();
         $token = JWTAuth::fromUser($user);
-        $timesheetId = Timesheet::all()->pluck("id")->random();
-        $this->delete('/api/timesheet/'.strval($timesheetId).'?token='.$token, [])
-            ->seeStatusCode(200);
-        $user->is_login = false;
+        $this->put('/api/timesheet/approve/'. $timesheet->id . '?token='.$token)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Timesheet approved successfully'
+            ]);
+    }
+
+    public function testShouldApproveFailed() {
+        $user = User::latest()->first();
+        $timesheet = Timesheet::latest()->first();
+        $user->is_admin = false;
         $user->save();
+        $token = JWTAuth::fromUser($user);
+        $this->put('/api/timesheet/approve/'. $timesheet->id .'?token='.$token)
+            ->seeStatusCode(400)
+            ->seeJsonEquals([
+                'message' => 'You are not admin'
+            ]);
     }
 
     public function testShouldDeleteFailed() {
-        $user = User::find(2);
-        $user->is_login = true;
+        $user = User::latest()->first();
+        $timesheet = Timesheet::latest()->first();
         $user->is_admin = false;
         $user->save();
         $token = JWTAuth::fromUser($user);
-        $this->delete('/api/timesheet/6?token='.$token, [])
-            ->seeStatusCode(400);
-        $user->is_login = false;
-        $user->save();
+        $this->delete('/api/timesheet/'. $timesheet->id .'?token='.$token)
+            ->seeStatusCode(400)
+            ->seeJsonEquals([
+                'message' => 'You are not admin'
+            ]);
     }
 
-    public function testShouldClearSuccess() {
-        $user = User::find(1);
-        $user->is_login = true;
+    public function testShouldDeleteSuccess() {
+        $user = User::latest()->first();
+        $timesheet = Timesheet::latest()->first();
         $user->is_admin = true;
         $user->save();
         $token = JWTAuth::fromUser($user);
-        $this->delete('/api/timesheet/clear?token='.$token, [])
-            ->seeStatusCode(200);
-        $user->is_login = false;
+        $this->delete('/api/timesheet/'. $timesheet->id .'?token='.$token)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Timesheet deleted successfully'
+            ]);
+    }
+
+    public function testShouldClearSuccess() {
+        $user = User::latest()->first();
+        $user->is_admin = true;
         $user->save();
+        $token = JWTAuth::fromUser($user);
+        $this->delete('/api/timesheet/clear?token='.$token)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Timesheet cleared'
+            ]);
     }
 
     public function testShouldClearFailed() {
-        $user = User::find(2);
-        $user->is_login = true;
+        $user = User::latest()->first();
         $user->is_admin = false;
         $user->save();
         $token = JWTAuth::fromUser($user);
-        $this->delete('/api/timesheet/clear?token='.$token, [])
-            ->seeStatusCode(400);
-        $user->is_login = false;
-        $user->save();
+        $this->delete('/api/timesheet/clear?token='.$token)
+            ->seeStatusCode(400)
+            ->seeJsonEquals([
+                'message' => 'You are not admin'
+            ]);
     }
 }

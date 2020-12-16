@@ -91,7 +91,7 @@ class TimesheetController extends Controller
         $employee->rating = $employee->rating + 1;
         $employee->save();
 
-        return $this->responseHandler(null, 200, 'Timesheet deleted successfully');
+        return $this->responseHandler(null, 200, 'Timesheet approved successfully');
     }
 
     /**

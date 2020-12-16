@@ -80,7 +80,7 @@ class AuthController extends Controller
     $user->save();
 
     $token = JWTAuth::fromUser($user);
-    return $this->responseHandler(['token' => $token, 'user' => $user], 200, 'Successfully logged in.');
+    return $this->responseHandler(['token' => $token], 200, 'Successfully logged in.');
   }
 
   /**
@@ -157,7 +157,7 @@ class AuthController extends Controller
     $user->employee_id = $employee->id;
     $user->save();
 
-    return $this->responseHandler(['user' => $user], 201, 'Successfully register user');
+    return $this->responseHandler(null, 201, 'Successfully register user');
   }
 
   /**

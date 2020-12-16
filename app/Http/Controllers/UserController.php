@@ -13,55 +13,55 @@ use App\Models\Notification;
 
 class UserController extends Controller
 {
-    private $validateRule = [
-        'update' => [
-            'email' => 'sometimes|nullable|email|unique:users',
-            'password' => 'nullable|string|min:6',
-            'secret' => 'nullable|string',
+    // private $validateRule = [
+    //     'update' => [
+    //         'email' => 'sometimes|nullable|email|unique:users',
+    //         'password' => 'nullable|string|min:6',
+    //         'secret' => 'nullable|string',
 
-            'first_name' => 'nullable|string',
-            'mid_name' => 'nullable|string',
-            'last_name' => 'nullable|string',
-            'phone' => 'nullable|string|between:8,16',
-            'gender' => 'nullable|in:Male,Female,Unknown',
-            'birthday' => 'nullable|date',
-            'salary' => 'nullable|integer',
-            'job_position' => 'nullable|string',
-            'rating' => 'nullable|numeric',
+    //         'first_name' => 'nullable|string',
+    //         'mid_name' => 'nullable|string',
+    //         'last_name' => 'nullable|string',
+    //         'phone' => 'nullable|string|between:8,16',
+    //         'gender' => 'nullable|in:Male,Female,Unknown',
+    //         'birthday' => 'nullable|date',
+    //         'salary' => 'nullable|integer',
+    //         'job_position' => 'nullable|string',
+    //         'rating' => 'nullable|numeric',
 
-            'country' => 'nullable|string',
-            'province' => 'nullable|string',
-            'city' => 'nullable|string',
-            'subdistrict' => 'nullable|string',
-            'postal_code' => 'nullable|string',
+    //         'country' => 'nullable|string',
+    //         'province' => 'nullable|string',
+    //         'city' => 'nullable|string',
+    //         'subdistrict' => 'nullable|string',
+    //         'postal_code' => 'nullable|string',
 
-            'supervisor_id' => 'nullable|integer',
-            'department_id' => 'nullable|integer',
-        ],
-    ];
+    //         'supervisor_id' => 'nullable|integer',
+    //         'department_id' => 'nullable|integer',
+    //     ],
+    // ];
 
     // Helper Function
     public function updateEmployee(Request $request, Employee $employee) {
         // update employee
-        $employee->first_name = $request->input("first_name") === null ? $employee->first_name : $request->input("first_name");
-        $employee->mid_name = $request->input("mid_name") === null ? $employee->mid_name : $request->input("mid_name");
-        $employee->last_name = $request->input("last_name") === null ? $employee->last_name : $request->input("last_name");
-        $employee->phone = $request->input("phone") === null ? $employee->phone : $request->input("phone");
-        $employee->gender = $request->input("gender") === null ? $employee->gender : $request->input("gender");
-        $employee->birthday = $request->input("birthday") === null ? $employee->birthday : $request->input("birthday");
-        $employee->salary = $request->input("salary") === null ? $employee->salary : $request->input("salary");
-        $employee->job_position = $request->input("job_position") === null ? $employee->job_position : $request->input("job_position");
+        $employee->first_name = $request->input('first_name') === null ? $employee->first_name : $request->input('first_name');
+        $employee->mid_name = $request->input('mid_name') === null ? $employee->mid_name : $request->input('mid_name');
+        $employee->last_name = $request->input('last_name') === null ? $employee->last_name : $request->input('last_name');
+        $employee->phone = $request->input('phone') === null ? $employee->phone : $request->input('phone');
+        $employee->gender = $request->input('gender') === null ? $employee->gender : $request->input('gender');
+        $employee->birthday = $request->input('birthday') === null ? $employee->birthday : $request->input('birthday');
+        $employee->salary = $request->input('salary') === null ? $employee->salary : $request->input('salary');
+        $employee->job_position = $request->input('job_position') === null ? $employee->job_position : $request->input('job_position');
 
         return $employee;
     }
 
     public function updateAddress(Request $request, Address $address)
     {
-        $address->country = $request->input("country") === null ? $address->country : $request->input("country");
-        $address->province = $request->input("province") === null ? $address->province : $request->input("province");
-        $address->city = $request->input("city") === null ? $address->city : $request->input("city");
-        $address->postal_code = $request->input("postal_code") === null ? $address->postal_code : $request->input("postal_code");
-        $address->street = $request->input("street") === null ? $address->street : $request->input("street");
+        $address->country = $request->input('country') === null ? $address->country : $request->input('country');
+        $address->province = $request->input('province') === null ? $address->province : $request->input('province');
+        $address->city = $request->input('city') === null ? $address->city : $request->input('city');
+        $address->postal_code = $request->input('postal_code') === null ? $address->postal_code : $request->input('postal_code');
+        $address->street = $request->input('street') === null ? $address->street : $request->input('street');
         return $address;
     }
 
@@ -107,19 +107,19 @@ class UserController extends Controller
         $address = Address::find($employee->address_id);
 
         // update user
-        $user->email = $request->input("email") === null ? $user->email : $request->input("email");
-        $user->password = $request->input("password") === null ? $user->password : Hash::make($request->input('password'));
+        $user->email = $request->input('email') === null ? $user->email : $request->input('email');
+        $user->password = $request->input('password') === null ? $user->password : Hash::make($request->input('password'));
 
         // update employee
         $employee = $this->updateEmployee($request, $employee);
 
         $diff = 0;
         if (
-            intval($request->input("rating")) >= 0 &&
+            intval($request->input('rating')) >= 0 &&
             intval($employee->rating) >= 0
         ) {
 
-            $diff = intval($request->input("rating")) - intval($employee->rating);
+            $diff = intval($request->input('rating')) - intval($employee->rating);
             $message_status = '';
 
             if ($diff !== 0) {
@@ -135,7 +135,7 @@ class UserController extends Controller
                     'message' => 'your rating is ' . $message_status,
                 ]);
             }
-            $employee->rating = $request->input("rating");
+            $employee->rating = $request->input('rating');
         }
 
         if ($request->input('supervisor_id')) {
@@ -162,7 +162,7 @@ class UserController extends Controller
         $employee->save();
         $user->save();
 
-        return $this->responseHandler(null, 200, "User updated successfully");
+        return $this->responseHandler(null, 200, 'User updated successfully');
     }
 
     /**
@@ -172,11 +172,11 @@ class UserController extends Controller
      */
     public function delete($id = null)
     {
-        $success = User::destroy($id);
+        $success = ($id);
 
         if (!$success) {
             return $this->responseHandler(null, 400, 'Failed to delete user');
         }
-        return $this->responseHandler(null, 200, "User deleted successfully");
+        return $this->responseHandler(null, 200, 'User deleted successfully');
     }
 }

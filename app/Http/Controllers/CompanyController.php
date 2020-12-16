@@ -145,7 +145,7 @@ class CompanyController extends Controller
         } else
             return $this->responseHandler(null, 404, 'Wrong identifier');
 
-        return $this->responseHandler(null, 200, 'Successfully create ' . $identifier);
+        return $this->responseHandler(null, 201, 'Successfully create ' . $identifier);
     }
 
     /**

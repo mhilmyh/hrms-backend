@@ -54,7 +54,7 @@ class ImageController extends Controller
         $employee->image_id = $image->id;
         $employee->save();
 
-        return $this->responseHandler(null, 201, "Image Uploaded Successfully.");
+        return $this->responseHandler(null, 201, 'Image Uploaded Successfully.');
     }
 
     /**
@@ -71,14 +71,14 @@ class ImageController extends Controller
 
         $model = null;
         switch ($identifier) {
-            case "employee":
+            case 'employee':
                 $model = Employee::find($id);
                 break;
-            case "office":
+            case 'office':
                 $model = Office::find($id);
                 break;
             default:
-                $this->responseHandler(null, 400, "Identifier not found");
+                $this->responseHandler(null, 400, 'Identifier not found');
                 break;
         }
 
@@ -92,7 +92,7 @@ class ImageController extends Controller
         $model->image_id = $image->id;
         $model->save();
 
-        return $this->responseHandler(null, 201, "Image Uploaded Successfully.");
+        return $this->responseHandler(null, 201, 'Image Uploaded Successfully.');
     }
 
     /**
@@ -107,14 +107,14 @@ class ImageController extends Controller
 
         $model = null;
         switch ($identifier) {
-            case "employee":
+            case 'employee':
                 $model = Employee::find($id);
                 break;
-            case "office":
+            case 'office':
                 $model = Office::find($id);
                 break;
             default:
-                $this->responseHandler(null, 400, "Identifier not found");
+                $this->responseHandler(null, 400, 'Identifier not found');
                 break;
         }
 
@@ -125,7 +125,7 @@ class ImageController extends Controller
         }
 
         if (!$this->imageDeleteHelper($image->url)) {
-            return $this->responseHandler(null, 404, "Failed when deleting an image");
+            return $this->responseHandler(null, 404, 'Failed when deleting an image');
         }
 
         $image->delete();
@@ -133,6 +133,6 @@ class ImageController extends Controller
         $model->image_id  = null;
         $model->save();
 
-        $this->responseHandler(null, 200, "Delete Image was successful");
+        $this->responseHandler(null, 200, 'Delete Image was successful');
     }
 }

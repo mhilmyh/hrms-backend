@@ -21,7 +21,7 @@ class Controller extends BaseController
      * @param message   message string response
      * @return object
      */
-    protected function responseHandler($data = null, $status = 200, $message = "")
+    protected function responseHandler($data = null, $status = 200, $message = '')
     {
         return response()->json(
             array_merge($data ?? [], ['message' => $message]),
@@ -39,7 +39,7 @@ class Controller extends BaseController
      */
     protected function imageUploadHelper(Request $request, $entity = 'U')
     {
-        if ($request->hasFile("image")) {
+        if ($request->hasFile('image')) {
             $extension = $request->file('image')->getClientOriginalExtension();
             $image_name = $entity . '-' . time() . '-' . Str::random() .  '.' . $extension;
             $success = $request->file('image')->move(
@@ -62,13 +62,13 @@ class Controller extends BaseController
      */
     protected function imageDeleteHelper($image_url = '')
     {
-        $array = explode("/", $image_url);
+        $array = explode(''/'', $image_url);
         $image_name = end($array);
         try {
             File::Delete('storage/' . $this->destFolder . '/' . $image_name);
             return true;
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            echo 'Error: ' . $e->getMessage();
             return false;
         }
     }
@@ -87,7 +87,7 @@ class Controller extends BaseController
             array_push($array, $value[0]);
         }
         return response()->json([
-            'message' => implode(" ", $array),
+            'message' => implode('', $array),
         ], 400);
     }
 }

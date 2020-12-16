@@ -1,23 +1,18 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Faker\Factory;
+use App\Models\User;
 
 class AuthTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testShouldRegisterSuccess() {
-        $faker = Faker\Factory::create();
-        $bd = $faker->dateTimeBetween('-90 years', '-15years');
-        $params = [
-            'email' => $faker->unique()->safeEmail,
+    public function testShouldRegisterSuccess()
+    {
+        $faker = Factory::create();
+        $birthday = $faker->dateTimeBetween('-90 years', '-15years');
+        $data = [
+            'email' => 'user@example.com',
             'password' => '1234567890',
 
             'first_name' => $faker->firstNameMale,
@@ -25,90 +20,67 @@ class AuthTest extends TestCase
             'last_name' => $faker->lastName,
             'phone' => '0832748139841',
             'gender' => 'Male',
-            'birthday' => $bd->format('Y-m-d'),
+            'birthday' => $birthday->format('Y-m-d'),
 
             'country' => $faker->country,
             'province' => $faker->state,
             'city' => $faker->city,
             'postal_code' => '12193',
-            'street' => $faker->streetAddress
+            'street' => $faker->streetAddress,
         ];
-        echo json_encode($params);
-        $this->post('/api/auth/register/', $params, [])
+
+        $this->post('/api/auth/register/', $data)
             ->seeStatusCode(201)
-            ->seeJsonStructure([
-                'user' => [
-                    "is_admin",
-                    "is_login",
-                    "email",
-                    "created_at",
-                    "updated_at",
-                    "id",
-                    "employee_id",
-                ],
-                'message'
+            ->seeJsonEquals([
+                'message' => 'Successfully register user'
             ]);
     }
 
     public function testLoginShouldSuccess()
     {
-        $userId = User::all()->pluck('id')->random();
-        $user1 = User::find($userId);
-        $params = [
-            'email' => $user1->email,
-            'password' => "1234567890"
+        $data = [
+            'email' => 'user@example.com',
+            'password' => '1234567890' 
         ];
-        $this->post('/api/auth/login', $params, [])
+
+        $this->post('/api/auth/login', $data)
             ->seeStatusCode(200)
-            ->seeJsonStructure([
-                'token',
-                'user' => [
-                    "id",
-                    "email",
-                    "is_admin",
-                    "is_login",
-                    "employee_id",
-                    "created_at",
-                    "updated_at",
-                ],
-                'message'
-            ]);
+            ->seeJsonStructure(['token', 'message']);
     }
 
     public function testLoginShouldNotFound()
     {
-        // Isikan saja dengan yang tidak ada di db
-        $params = [
-            'email' => 'abab@icu.id',
-            'password' => '1234567890'
+        $data = [
+            'email' => 'wrong@example.com',
+            'password' => '1234567890' 
         ];
-        $this->post('/api/auth/login', $params, [])
-            ->seeStatusCode(404);
-    }
 
-    public function testLoginShouldFailNotMatchingPass()
-    {
-        // Isikan saja dengan yang tidak ada di db
-        $userId = User::all()->pluck('id')->random();
-        $user1 = User::find($userId);
-        $params = [
-            'email' => $user1->email,
-            'password' => '1234139103'
-        ];
-        $this->post('/api/auth/login', $params, [])
-            ->seeStatusCode(400)
+        $this->post('/api/auth/login', $data)
+            ->seeStatusCode(404)
             ->seeJsonEquals([
-                'message' => 'Password does not match'
+                'message' => 'User not found'
             ]);
     }
 
-    public function testShouldGetUserSuccess() {
-        $user1 = User::find(1);
-        $user1->is_login = true;
-        $user1->is_admin = false;
-        $user1->save();
-        $token = JWTAuth::fromUser($user1);
-        $this->get('/api/auth/user?token='.$token, [])
+    public function testLoginShouldFailPassNotMatch()
+    {
+        $data = [
+            'email' => 'user@example.com',
+            'password' => '0123456789'
+        ];
+
+        $this->post('/api/auth/login', $data)
+            ->seeStatusCode(400)
+            ->seeJsonEquals([
+                'message' => 'Password does not match',
+            ]);
+    }
+
+    public function testShouldGetUserSuccess()
+    {
+        $user = User::latest()->first();
+        $token = JWTAuth::fromUser($user);
+        $this->get('/api/auth/user?token=' . $token)
             ->seeStatusCode(200)
             ->seeJsonStructure([
                 'user' => [
@@ -145,50 +117,52 @@ class AuthTest extends TestCase
                             "city",
                             "postal_code",
                             "street",
-                            "full_address"
+                            "full_address",
                         ],
                         "supervisor",
                         "department",
-                        "image"
-                    ]
+                        "image",
+                    ],
                 ],
-                'message'
+                'message',
             ]);
     }
 
-    public function testShouldGetUserFailed() {
-        $user1 = User::find(1);
-        $user1->is_login = true;
-        $user1->is_admin = false;
-        $user1->save();
-        $token = "blajblahblahblahbllah";
-        $this->get('/api/auth/user?token='.$token, [])
+    public function testShouldGetUserFailed()
+    {
+        $token = "this_is_not_valid_token";
+        $this->get('/api/auth/user?token=' . $token)
             ->seeStatusCode(401);
-        $user1->is_login = false;
-        $user1->save();
     }
 
-    public function testShouldLogoutSuccess(){
-        $user1 = User::find(1);
-        $user1->is_login = true;
-        $user1->is_admin = false;
-        $user1->save();
-        $token = JWTAuth::fromUser($user1);
-        $this->post('/api/auth/logout?token='.$token, [])
+    public function testShouldLogoutSuccess()
+    {
+        $user = User::latest()->first();
+        $token = JWTAuth::fromUser($user);
+        $this->post('/api/auth/logout?token=' . $token)
             ->seeStatusCode(200);
-        $user1->is_login = false;
-        $user1->save();
+
+        $user = User::where('email', $user->email)->first();
+        $this->assertTrue(
+            $user->is_login === false,
+            'User should logout'
+        );
     }
 
-    public function testShouldLogoutFail(){
-        $user1 = User::find(1);
-        $user1->is_login = true;
-        $user1->is_admin = false;
-        $user1->save();
-        $token = "bakcaoncqoiuecoqpecmqpdl";
-        $this->post('/api/auth/logout?token='.$token, [])
+    public function testShouldLogoutFail()
+    {
+        $user = User::latest()->first();
+        $user->is_login = true;
+        $user->save();
+
+        $token = "this_is_not_valid_token";
+        $this->post('/api/auth/logout?token=' . $token)
             ->seeStatusCode(401);
-        $user1->is_login = false;
-        $user1->save();
+
+        $user = User::latest()->first();
+        $this->assertTrue(
+            $user->is_login === true,
+            'User should login'
+        );
     }
 }

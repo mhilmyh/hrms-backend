@@ -1,166 +1,140 @@
 <?php
 
-use App\Models\Department;
-use App\Models\Office;
-use App\Models\User;
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use Faker\Factory;
+use App\Models\User;
+use App\Models\Office;
+use App\Models\Department;
 class CompanyTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
+    
     public function testShouldReturnAllCompanies()
     {
-        $this->get('/api/company')->seeStatusCode(200);
-    }
-
-    public function testShouldReturnAllOfficesSuccess() {
-        $user = User::find(1);
-        $token = JWTAuth::fromUser($user);
-        $user->is_login = true;
-        $this->get('/api/company/offices?token='.$token)->seeStatusCode(200);
-    }
-
-    public function testShouldReturnAllDeptsSuccess() {
-        $user = User::find(1);
-        $token = JWTAuth::fromUser($user);
-        $user->is_login = true;
-        $this->get('/api/company/departments?token='.$token)->seeStatusCode(200);
+        $this->get('/api/company')
+            ->seeStatusCode(200)
+            ->seeJsonStructure(['message', 'offices', 'departments']);
     }
 
     public function testShouldCreateOfficeSuccess() {
-        $user = User::find(1);
+        $user = User::latest()->first();
         $user->is_admin = true;
-        $user->is_login = true;
         $user->save();
+        $user = User::latest()->first();
+        $this->assertTrue(
+            $user->is_admin === true, 
+            'User role must be admin'
+        );
         $token = JWTAuth::fromUser($user);
-        $faker = Faker\Factory::create();
-        $params = [
+        $faker = Factory::create();
+        $data = [
             'name' => $faker->company,
             'opening_time' => '07:00',
             'closing_time' => '16:00',
             'building' => 'Building '.strval(random_int(1, 10)),
             'is_branch' => $faker->boolean(50),
-
             'country' => $faker->country,
             'province' => $faker->state,
             'city' => $faker->city,
             'postal_code' => '12193',
             'street' => $faker->streetAddress
-
         ];
-
-        $this->post('/api/company/office?token='.$token, $params, [])->seeStatusCode(200);
-        $user->is_admin = false;
-        $user->is_login = false;
-        $user->save();
+        $this->post('/api/company/office?token=' . $token, $data)
+            ->seeStatusCode(201)
+            ->seeJsonEquals([
+                'message' => 'Successfully create office'
+            ]);
     }
 
     public function testShouldCreateDeptSuccess() {
-        $user = User::find(1);
+        $user = User::latest()->first();
         $user->is_admin = true;
-        $user->is_login = true;
         $user->save();
         $token = JWTAuth::fromUser($user);
-        $faker = Faker\Factory::create();
-        $params = [
+        $faker = Factory::create();
+        $data = [
             'name' => $faker->company,
             'code' => 'AAA',
             'chairman_id' => User::all()->pluck('id')->random(),
             'office_id' => Office::all()->pluck('id')->random()
         ];
 
-        $this->post('/api/company/department?token='.$token, $params, [])->seeStatusCode(200);
-        $user->is_admin = false;
-        $user->is_login = false;
-        $user->save();
+        $this->post('/api/company/department?token=' . $token, $data)
+            ->seeStatusCode(201)
+            ->seeJsonEquals([
+                'message' => 'Successfully create department'
+            ]);
     }
 
     public function testShouldUpdateOfficeSuccess() {
-        $this->testShouldCreateOfficeSuccess();
-        $user = User::find(1);
-        $user->is_admin = true;
-        $user->is_login = true;
-        $user->save();
-        $officeId = Office::all()->pluck('id')->random();
+        $user = User::latest()->first();
+        $office_id = Office::all()->pluck('id')->random();
         $token = JWTAuth::fromUser($user);
-        $faker = Faker\Factory::create();
-        $params = [
-            'id' => $officeId,
+        $faker = Factory::create();
+        $data = [
+            'id' => $office_id,
             'name' => $faker->company,
             'opening_time' => '09:00',
             'closing_time' => '18:00',
             'building' => 'Building '.strval(random_int(1, 10)),
             'is_branch' => $faker->boolean(50),
-
             'country' => $faker->country,
             'province' => $faker->state,
             'city' => $faker->city,
             'postal_code' => '99999',
             'street' => $faker->streetAddress
-
         ];
-
-        $this->post('/api/company/office?token='.$token, $params, [])->seeStatusCode(200);
-        $user->is_admin = false;
-        $user->is_login = false;
-        $user->save();
+        $this->put('/api/company/office?token=' . $token, $data)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Update Successfully'
+            ]);
     }
 
     public function testShouldUpdateDeptSuccess() {
-        $this->testShouldCreateDeptSuccess();
-        $user = User::find(1);
+        $user = User::latest()->first();
         $user->is_admin = true;
-        $user->is_login = true;
         $user->save();
-        $deptId = Department::all()->pluck('id')->random();
+        $dept_id = Department::all()->pluck('id')->random();
         $token = JWTAuth::fromUser($user);
-        $faker = Faker\Factory::create();
-        $params = [
-            'id' => $deptId,
+        $faker = Factory::create();
+        $data = [
+            'id' => $dept_id,
             'name' => $faker->company,
             'code' => 'AAA',
             'chairman_id' => User::all()->pluck('id')->random(),
             'office_id' => Office::all()->pluck('id')->random()
         ];
-
-        $this->post('/api/company/department?token='.$token, $params, [])->seeStatusCode(200);
-        $user->is_admin = false;
-        $user->is_login = false;
-        $user->save();
+        $this->put('/api/company/department?token='.$token, $data)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Update Successfully'
+            ]);
     }
 
     public function testShouldDeleteOfficeSuccess() {
-        $this->testShouldCreateOfficeSuccess();
-        $user = User::find(1);
+        $user = User::latest()->first();
         $user->is_admin = true;
-        $user->is_login = true;
         $user->save();
-        $officeId = Office::all()->pluck('id')->random();
+        $office_id = Office::all()->pluck('id')->random();
         $token = JWTAuth::fromUser($user);
-        $this->delete('/api/company/office/'.$officeId.'?token='.$token)->seeStatusCode(200);
-        $user->is_admin = false;
-        $user->is_login = false;
-        $user->save();
+        $this->delete('/api/company/office/'.$office_id.'?token='.$token)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Successfully delete office'
+            ]);
     }
 
     public function testShouldDeleteDeptSuccess() {
-        $this->testShouldCreateDeptSuccess();
-        $user = User::find(1);
+        $user = User::latest()->first();
         $user->is_admin = true;
-        $user->is_login = true;
         $user->save();
-        $deptId = Department::all()->pluck('id')->random();
+        $dept_id = Department::all()->pluck('id')->random();
         $token = JWTAuth::fromUser($user);
-        $this->delete('/api/company/department/'.$deptId.'?token='.$token)->seeStatusCode(200);
-        $user->is_admin = false;
-        $user->is_login = false;
-        $user->save();
+        $this->delete('/api/company/department/'.$dept_id.'?token='.$token)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'Successfully delete department'
+            ]);
     }
 
 }

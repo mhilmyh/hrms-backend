@@ -100,7 +100,6 @@ class UserController extends Controller
                 else {
                     $message_status = 'decrease';
                 }
-
                 Notification::create([
                     'user_id' => $user->id,
                     'message' => 'your rating is ' . $message_status,
@@ -109,7 +108,8 @@ class UserController extends Controller
             $employee->rating = $request->input('rating');
         }
 
-        if ($request->input('supervisor_id')) {
+
+        if ($request->input('supervisor_id') && $request->input('supervisor_id') !== $employee->supervisor_id) {
             $employee->supervisor_id = $request->input('supervisor_id');
             Notification::create([
                 'user_id' => $request->input('supervisor_id'),
@@ -117,7 +117,7 @@ class UserController extends Controller
             ]);
         }
 
-        if ($request->input('department_id')) {
+        if ($request->input('department_id') && $request->input('department_id') !== $employee->department_id) {
             $employee->department_id = $request->input('department_id');
             Notification::create([
                 'user_id' => $user->id,

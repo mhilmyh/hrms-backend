@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -102,7 +101,6 @@ class UserController extends Controller
     {
         // find user, employee and address
         $user = User::find($id);
-        error_log($id);
         $employee = Employee::find($user->employee_id);
         $address = Address::find($employee->address_id);
 
@@ -172,11 +170,16 @@ class UserController extends Controller
      */
     public function delete($id = null)
     {
-        $success = ($id);
+        if (!auth()->user()->is_admin)
+            return $this->responseHandler(null, 400, 'You are not admin');
 
-        if (!$success) {
-            return $this->responseHandler(null, 400, 'Failed to delete user');
-        }
-        return $this->responseHandler(null, 200, 'User deleted successfully');
+        $user = User::find($id);
+
+        if (!$user)
+            return $this->responseHandler(null, 404, 'User not found');
+
+        $user->delete();
+
+        return $this->responseHandler(null, 200, "User deleted successfully");
     }
 }

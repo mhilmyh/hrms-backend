@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Activity;
 use App\Models\Timesheet;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;

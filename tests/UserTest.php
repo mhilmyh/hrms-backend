@@ -4,7 +4,6 @@ use App\Models\Address;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserTest extends TestCase
@@ -87,7 +86,7 @@ class UserTest extends TestCase
             'province' => 'Lionnes',
             'city' => 'London'
         ];
-        $this->put('/api/user/'. $user->id .'?token='.$token, $data)
+        $this->put('/api/user/'. $user->id .'?token=' . $token, $data)
             ->seeStatusCode(200)
             ->seeJsonEquals([
                 'message' => 'User updated successfully'
@@ -97,29 +96,22 @@ class UserTest extends TestCase
     public function testShouldFailedDeleteUser() {
         $user = User::latest()->first();
         $token = JWTAuth::fromUser($user);
-        $this->delete('/api/user/'. $user->id .'?token='.$token)
+        $this->delete('/api/user/'. $user->id .'?token=' . $token)
             ->seeStatusCode(400)
-            ->seeJsonEquals(['message' => 'Failed to delete user']);
+            ->seeJsonEquals([
+                'message' => 'You are not admin'
+            ]);
     }
 
-    // public function testShouldDeleteAUser() {
-    //     $user = User::factory()->create();
-    //     $address = Address::factory()->create();
-    //     $employee = Employee::factory()->create();
-
-    //     $user->employee_id = $employee->id;
-    //     $user->is_login = true;
-    //     $employee->user_id = $user->id;
-    //     $employee->address_id = $address->id;
-
-    //     $user->save();
-    //     $employee->save();
-    //     $address->save();
-
-    //     $token = JWTAuth::fromUser($user);
-
-    //     $this->delete('/api/user/'.strval($user->id).'?token='.$token)
-    //         ->seeStatusCode(200)
-    //         ->seeJsonEquals(['message' => 'User deleted successfully']);
-    // }
+    public function testShouldDeleteAUser() {
+        $user = User::latest()->first();
+        $user->is_admin = true;
+        $user->save();
+        $token = JWTAuth::fromUser($user);
+        $this->delete('/api/user/'. $user->id .'?token=' . $token)
+            ->seeStatusCode(200)
+            ->seeJsonEquals([
+                'message' => 'User deleted successfully'
+            ]);
+    }
 }

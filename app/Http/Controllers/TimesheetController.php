@@ -53,8 +53,8 @@ class TimesheetController extends Controller
     public function create(Request $request)
     {
         $this->validate($request, $this->validateRule['create']);
-        $check_exist = Timesheet::where('user_id', auth()->user()->id)->where('created_at', '>=', Carbon::today())->count();
-        if ($check_exist) {
+        $already_submit_today = Timesheet::where('user_id', auth()->user()->id)->where('created_at', '>=', Carbon::today())->count();
+        if ($already_submit_today) {
             return $this->responseHandler(null, 400, 'You already submit the timesheet today');
         }
 
@@ -128,6 +128,6 @@ class TimesheetController extends Controller
             $timesheet->delete();
         }
 
-        return $this->responseHandler(null, 200, 'Timesheet cleared');
+        return $this->responseHandler(null, 200, 'All Timesheet cleared');
     }
 }

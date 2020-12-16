@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
+use App\Models\Address;
+use App\Models\Employee;
 class Controller extends BaseController
 {
     private $publicPath = 'storage';
@@ -21,7 +23,7 @@ class Controller extends BaseController
      * @param message   message string response
      * @return object
      */
-    protected function responseHandler($data = null, $status = 200, $message = "")
+    protected function responseHandler($data = null, $status = 200, $message = '')
     {
         return response()->json(
             array_merge($data ?? [], ['message' => $message]),
@@ -62,15 +64,52 @@ class Controller extends BaseController
      */
     protected function imageDeleteHelper($image_url = '')
     {
-        $array = explode("/", $image_url);
+        $array = explode('/', $image_url);
         $image_name = end($array);
         try {
             File::Delete('storage/' . $this->destFolder . '/' . $image_name);
             return true;
         } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
+            echo 'Error: ' . $e->getMessage();
             return false;
         }
+    }
+
+    /**
+     * Helper function for update employee
+     *
+     * @param request request instace
+     * @param employee employee model
+     * @return object
+     */
+    public function updateEmployee(Request $request, Employee $employee)
+    {
+        $employee->first_name = $request->input('first_name') === null ? $employee->first_name : $request->input('first_name');
+        $employee->mid_name = $request->input('mid_name') === null ? $employee->mid_name : $request->input('mid_name');
+        $employee->last_name = $request->input('last_name') === null ? $employee->last_name : $request->input('last_name');
+        $employee->phone = $request->input('phone') === null ? $employee->phone : $request->input('phone');
+        $employee->gender = $request->input('gender') === null ? $employee->gender : $request->input('gender');
+        $employee->birthday = $request->input('birthday') === null ? $employee->birthday : $request->input('birthday');
+        $employee->salary = $request->input('salary') === null ? $employee->salary : $request->input('salary');
+        $employee->job_position = $request->input('job_position') === null ? $employee->job_position : $request->input('job_position');
+        return $employee;
+    }
+
+    /**
+     * Helper function for update adddress
+     *
+     * @param request request instace
+     * @param adddress address model
+     * @return object
+     */
+    public function updateAddress(Request $request, Address $address)
+    {
+        $address->country = $request->input('country') === null ? $address->country : $request->input('country');
+        $address->province = $request->input('province') === null ? $address->province : $request->input('province');
+        $address->city = $request->input('city') === null ? $address->city : $request->input('city');
+        $address->postal_code = $request->input('postal_code') === null ? $address->postal_code : $request->input('postal_code');
+        $address->street = $request->input('street') === null ? $address->street : $request->input('street');
+        return $address;
     }
 
     /**
@@ -87,7 +126,7 @@ class Controller extends BaseController
             array_push($array, $value[0]);
         }
         return response()->json([
-            'message' => implode(" ", $array),
+            'message' => implode(' ', $array),
         ], 400);
     }
 }

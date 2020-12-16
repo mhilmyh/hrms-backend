@@ -67,7 +67,7 @@ class CompanyController extends Controller
 
     /**
      * Get offices and departments
-     * 
+     *
      * @return array offices and departments
      */
     public function index()
@@ -80,7 +80,7 @@ class CompanyController extends Controller
 
     /**
      * Get offices
-     * 
+     *
      * @return array offices
      */
     public function offices()
@@ -92,7 +92,7 @@ class CompanyController extends Controller
 
     /**
      * Get departments
-     * 
+     *
      * @return array departments
      */
     public function departments()
@@ -104,7 +104,7 @@ class CompanyController extends Controller
 
     /**
      * Create office or department
-     * 
+     *
      * @return object office or department
      */
     public function create(Request $request, $identifier = '')
@@ -145,12 +145,12 @@ class CompanyController extends Controller
         } else
             return $this->responseHandler(null, 404, 'Wrong identifier');
 
-        return $this->responseHandler(null, 200, 'Successfully create ' . $identifier);
+        return $this->responseHandler(null, 201, 'Successfully create ' . $identifier);
     }
 
     /**
      * Update office or department
-     * 
+     *
      * @return object updated office or department
      */
     public function update(Request $request, $identifier = '')
@@ -196,7 +196,7 @@ class CompanyController extends Controller
 
     /**
      * Delete office or department
-     * 
+     *
      * @return boolean value
      */
     public function delete($identifier = '', $id = null)

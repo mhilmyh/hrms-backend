@@ -67,7 +67,7 @@ class Employee extends Model
 
   /**
    * Append new value to response
-   * 
+   *
    * @var array
    */
   protected $appends = ['full_name'];
@@ -84,7 +84,7 @@ class Employee extends Model
 
   /**
    * Computed property eloquent
-   * 
+   *
    * @return string
    */
   public function getFullNameAttribute()
@@ -149,7 +149,7 @@ class Employee extends Model
 
   /**
    * Delete model with relation
-   * 
+   *
    * @return bool
    */
   public function delete()

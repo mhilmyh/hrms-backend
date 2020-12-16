@@ -35,7 +35,7 @@ class TimesheetController extends Controller
 
     /**
      * Get timesheets
-     * 
+     *
      * @return array timesheet
      */
     public function index()
@@ -47,13 +47,12 @@ class TimesheetController extends Controller
 
     /**
      * Create timesheet
-     * 
+     *
      * @return object timesheet
      */
     public function create(Request $request)
     {
         $this->validate($request, $this->validateRule['create']);
-
         $check_exist = Timesheet::where('user_id', auth()->user()->id)->where('created_at', '>=', Carbon::today())->count();
         if ($check_exist) {
             return $this->responseHandler(null, 400, 'You already submit the timesheet today');
@@ -71,12 +70,12 @@ class TimesheetController extends Controller
 
         Activity::insert($data);
 
-        return $this->responseHandler(null, 200, 'Successfully create timesheet');
+        return $this->responseHandler(null, 201, 'Successfully create timesheet');
     }
 
     /**
      * Approve timesheet
-     * 
+     *
      * @return boolean value
      */
     public function approve($id = null)
@@ -92,12 +91,12 @@ class TimesheetController extends Controller
         $employee->rating = $employee->rating + 1;
         $employee->save();
 
-        return $this->responseHandler(null, 200, 'Timesheet deleted successfully');
+        return $this->responseHandler(null, 200, 'Timesheet approved successfully');
     }
 
     /**
      * Delete timesheet
-     * 
+     *
      * @return boolean value
      */
     public function delete($id = null)
@@ -115,7 +114,7 @@ class TimesheetController extends Controller
 
     /**
      * Clear all timesheet
-     * 
+     *
      * @return boolean value
      */
     public function clear()

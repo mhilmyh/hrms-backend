@@ -19,13 +19,6 @@ class EmployeeFactory extends Factory
         return mt_rand($st_num * $mul, $end_num * $mul) / $mul;
     }
 
-    function delVal($del_val, $arr)
-    {
-        if (($key = array_search($del_val, $arr)) !== false) {
-            unset($arr[$key]);
-        }
-        return $arr;
-    }
     /**
      * The name of the factory's corresponding model.
      *
@@ -42,9 +35,7 @@ class EmployeeFactory extends Factory
     {
         $gender = $this->faker->randomElement(['Male', 'Female']);
         $bd = $this->faker->dateTimeBetween('-90 years', '-15years');
-        $allUsers = User::all()->pluck("id")->toArray();
-        $user = $this->faker->randomElement($allUsers);
-        $otherUser = $this->faker->randomElement($this->delVal($user, $allUsers));
+        $image = Image::all()->pluck("id")->random();
 
         return [
             'first_name' => $this->faker->firstName($gender),
@@ -56,11 +47,11 @@ class EmployeeFactory extends Factory
             'salary' => mt_rand(1000000, 20000000),
             'job_position' => $this->faker->jobTitle,
             'rating' => $this->rand_float(),
-            'user_id' => User::factory(),
-            'image_id' => Image::factory(),
-            'address_id' => Address::factory(),
-            'department_id' => Department::factory(),
-            'supervisor_id' => $otherUser
+            'user_id' => 1,
+            'image_id' => $image,
+            'address_id' => Address::all()->pluck("id")->random(),
+            'department_id' => Department::all()->pluck("id")->random(),
+            'supervisor_id' => 2
         ];
     }
 }

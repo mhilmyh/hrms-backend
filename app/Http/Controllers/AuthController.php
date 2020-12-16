@@ -74,7 +74,7 @@ class AuthController extends Controller
       return $this->responseHandler(null, 404, 'User not found');
 
     if (!Hash::check($request->input('password'), $user->password))
-      return $this->responseHandler(null, 400, 'Password not match');
+      return $this->responseHandler(null, 400, 'Password does not match');
 
     $user->is_login = true;
     $user->save();
@@ -85,7 +85,7 @@ class AuthController extends Controller
 
   /**
    * Logout controller
-   * 
+   *
    * @return null
    */
   public function logout()
@@ -122,7 +122,7 @@ class AuthController extends Controller
 
   /**
    * Register controller
-   * 
+   *
    * @return null
    */
   public function register(Request $request)
@@ -162,7 +162,7 @@ class AuthController extends Controller
 
   /**
    * Clear notification controller
-   * 
+   *
    * @return null
    */
   public function clear($id = null)

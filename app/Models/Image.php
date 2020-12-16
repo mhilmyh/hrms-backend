@@ -56,12 +56,4 @@ class Image extends Model
   public static function booted()
   {
   }
-
-  public function employee() {
-      return $this->belongsTo('App\Models\Employee', 'id');
-  }
-
-  public function office(){
-    return $this->belongsTo('App\Models\Office', 'id');
-  }
 }

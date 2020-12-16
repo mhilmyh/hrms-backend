@@ -39,9 +39,7 @@ class ImageController extends Controller
     public function profile(Request $request)
     {
         $this->validate($request, $this->validateRule['create']);
-
         $employee = Employee::with('image')->where('user_id', auth()->user()->id)->first();
-
         if ($employee->image){
             $this->imageDeleteHelper($employee->image->url);
         }
@@ -50,10 +48,8 @@ class ImageController extends Controller
             'alt' => 'profile',
             'url' => $image_url
         ]);
-
         $employee->image_id = $image->id;
         $employee->save();
-
         return $this->responseHandler(null, 201, 'Image Uploaded Successfully.');
     }
 

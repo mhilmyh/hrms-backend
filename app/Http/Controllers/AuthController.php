@@ -80,7 +80,7 @@ class AuthController extends Controller
     $user->save();
 
     $token = JWTAuth::fromUser($user);
-    return $this->responseHandler(['token' => $token], 200, 'Successfully logged in.');
+    return $this->responseHandler(['token' => $token]);
   }
 
   /**

@@ -45,7 +45,7 @@ class AuthTest extends TestCase
 
         $this->post('/api/auth/login', $data)
             ->seeStatusCode(200)
-            ->seeJsonStructure(['token', 'message']);
+            ->seeJsonStructure(['token']);
     }
 
     public function testLoginShouldNotFound()
